@@ -119,7 +119,10 @@ exports.BattleAliases = {
 
 	// pokemon
 	"aboma": "Abomasnow",
+	"bannet": "Banette",
+	"burm": "Burmy",
 	"chomp": "Garchomp",
+	"didglea": "Diglett",
 	"dnite": "Dragonite",
 	"ferro": "Ferrothorn",
 	"forry": "Forretress",
@@ -128,16 +131,21 @@ exports.BattleAliases = {
 	"kyuw": "Kyurem-White",
 	"luke":  "Lucario",
 	"mence": "Salamence",
+	"nickiminaj": "Jynx",
 	"p2": "Porygon2",
 	"pory2": "Porygon2",
 	"pz": "Porygon-Z",
 	"poryz": "Porygon-Z",
+	"rachi": "Jirachi",
+	"rai": "Darkrai",
 	"rank": "Reuniclus",
+	"saswuad": "Sableye",
 	"ttar": "Tyranitar",
 	"zam": "Alakazam",
 
 	// moves
-	"bpass": "Baton Pass",
+	"bb": "Brave Bird",
+	"bp": "Baton Pass",
 	"cc": "Close Combat",
 	"cm": "Calm Mind",
 	"dd": "Dragon Dance",

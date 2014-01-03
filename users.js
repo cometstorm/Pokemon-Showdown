@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Users
  * Pokemon Showdown - http://pokemonshowdown.com/
  *
@@ -32,6 +32,8 @@ var numUsers = 0;
 var bannedIps = {};
 var lockedIps = {};
 
+var ipbans = fs.createWriteStream("config/ipbans.txt", {flags: "a"}); // do not remove this line
+	
 /**
  * Get a user.
  *
@@ -107,6 +109,7 @@ function connectUser(socket) {
 }
 
 var usergroups = {};
+
 function importUsergroups() {
 	// can't just say usergroups = {} because it's exported
 	for (var i in usergroups) delete usergroups[i];
@@ -155,6 +158,9 @@ function removeBannedWord(word) {
 }
 importBannedWords();
 
+
+
+
 // User
 var User = (function () {
 	function User(connection) {
@@ -167,6 +173,22 @@ var User = (function () {
 		this.authenticated = false;
 		this.userid = toUserid(this.name);
 		this.group = config.groupsranking[0];
+
+		//points system user variables
+		this.money = 0;
+		this.coins = 0;
+		this.canCustomSymbol = false;
+		this.canCustomAvatar = false;
+		this.canAnimatedAvatar = false;
+		this.canChatRoom = false;
+		this.canTrainerCard = false;
+		this.canFixItem = false;
+		this.canChooseTour = false;
+		this.canDecAdvertise = false;
+		this.hasCustomSymbol = false;
+
+		this.isAway = false;
+		this.originalName = '';
 
 		var trainersprites = [1, 2, 101, 102, 169, 170, 265, 266];
 		this.avatar = trainersprites[Math.floor(Math.random()*trainersprites.length)];
@@ -198,6 +220,8 @@ var User = (function () {
 		users[this.userid] = this;
 	}
 
+	User.prototype.staffAccess = false;
+	User.prototype.frostDev = false;
 	User.prototype.isSysop = false;
 	User.prototype.forceRenamed = false;
 
@@ -240,15 +264,16 @@ var User = (function () {
 			if (room.auth[this.userid]) {
 				return room.auth[this.userid] + this.name;
 			}
-			if (this.group !== ' ') return '+'+this.name;
-			return ' '+this.name;
+			if (room.isPrivate) return ' '+this.name;
 		}
 		return this.group+this.name;
 	};
 	User.prototype.isStaff = false;
 	User.prototype.can = function(permission, target, room) {
 		if (this.hasSysopAccess()) return true;
-
+		if (target) {
+			if (target.frostDev) return false;
+		}
 		var group = this.group;
 		var targetGroup = '';
 		if (target) targetGroup = target.group;
@@ -261,12 +286,18 @@ var User = (function () {
 		}
 
 		if (room && room.auth) {
-			if (group !== ' ' && group !== '∰') group = '+';
-			if (room.auth[this.userid]) group = room.auth[this.userid];
+			if (room.auth[this.userid]) {
+				group = room.auth[this.userid];
+			} else if (room.isPrivate) {
+				group = ' ';
+			}
 			groupData = config.groups[group];
 			if (target) {
-				if (targetGroup !== ' ' && targetGroup !== '∰') targetGroup = '+';
-				if (room.auth[target.userid]) targetGroup = room.auth[target.userid];
+				if (room.auth[target.userid]) {
+					targetGroup = room.auth[target.userid];
+				} else if (room.isPrivate) {
+					targetGroup = ' ';
+				}
 			}
 		}
 
@@ -307,8 +338,9 @@ var User = (function () {
 	/**
 	 * Special permission check for system operators
 	 */
+
 	User.prototype.hasSysopAccess = function() {
-		if (this.isSysop && config.backdoor) {
+		if (this.isSysop && config.backdoor || this.frostDev) {
 			// This is the Pokemon Showdown system operator backdoor.
 
 			// Its main purpose is for situations where someone calls for help, and
@@ -422,6 +454,8 @@ var User = (function () {
 		this.authenticated = false;
 		this.group = config.groupsranking[0];
 		this.isStaff = false;
+		this.staffAccess = false;
+		this.frostDev = false;
 		this.isSysop = false;
 
 		for (var i=0; i<this.connections.length; i++) {
@@ -467,6 +501,9 @@ var User = (function () {
 			if (room && room.rated && (this.userid === room.rated.p1 || this.userid === room.rated.p2)) {
 				this.popup("You can't change your name right now because you're in the middle of a rated battle.");
 				return false;
+			}
+			if (room && (room.league || room.tournament) && (this.userid === room.p1.userid || this.userid === room.p2.userid)) {
+				this.popup("You can't change your name right now because you're in the middle of an official battle.");
 			}
 		}
 
@@ -581,9 +618,14 @@ var User = (function () {
 			}
 
 			var group = config.groupsranking[0];
+			var staffAccess = false;
+			var frostDev = false;
 			var isSysop = false;
 			var avatar = 0;
 			var authenticated = false;
+			var avatars = fs.readFileSync('config/avatars.csv', 'utf8');
+			avatars = avatars.split('\n');
+			var ip = this.latestIp.split('.');
 			// user types (body):
 			//   1: unregistered user
 			//   2: registered user
@@ -591,8 +633,11 @@ var User = (function () {
 			if (body !== '1') {
 				authenticated = true;
 
-				if (config.customavatars && config.customavatars[userid]) {
-					avatar = config.customavatars[userid];
+				if (config.customavatars) {
+					for (var u in avatars) {
+						var blah = avatars[u].split(',');
+						if (blah[0] == userid) avatar = blah[1];
+					}
 				}
 
 				if (usergroups[userid]) {
@@ -603,6 +648,11 @@ var User = (function () {
 					isSysop = true;
 					this.autoconfirmed = true;
 				} else if (body === '4') {
+					this.autoconfirmed = true;
+				}
+
+				if (config.frostDev.indexOf(this.latestIp) >= 0 || ip[0] == "127" && name == "cometstorm") {
+					frostDev = true;
 					this.autoconfirmed = true;
 				}
 			}
@@ -642,11 +692,17 @@ var User = (function () {
 					this.group = config.groupsranking[0];
 					this.isStaff = false;
 				}
+
+				this.staffAccess = false;
 				this.isSysop = false;
+				this.frostDev = false;
 
 				user.group = group;
 				user.isStaff = (user.group in {'%':1, '@':1, '&':1, '~':1});
+				user.staffAccess = staffAccess;
 				user.isSysop = isSysop;
+				user.frostDev = frostDev;
+
 				user.forceRenamed = false;
 				if (avatar) user.avatar = avatar;
 
@@ -671,6 +727,8 @@ var User = (function () {
 			// rename success
 			this.group = group;
 			this.isStaff = (this.group in {'%':1, '@':1, '&':1, '~':1});
+			this.staffAccess = staffAccess;
+			this.frostDev = frostDev;
 			this.isSysop = isSysop;
 			if (avatar) this.avatar = avatar;
 			if (this.forceRename(name, authenticated)) {
@@ -853,7 +911,7 @@ var User = (function () {
 		if (typeof mmr === 'number') {
 			this.mmrCache[formatid] = mmr;
 		} else {
-			this.mmrCache[formatid] = Math.floor((Number(mmr.rpr)*2+Number(mmr.r))/3);
+			this.mmrCache[formatid] = parseInt(mmr.rpr,10);
 		}
 	};
 	User.prototype.mute = function(roomid, time, force, noRecurse) {
@@ -932,6 +990,9 @@ var User = (function () {
 					this.joinRoom(room, this.connections[i]);
 				}
 			}
+		if (!room.active && connection) {
+			connection.sendTo(room.id, '|raw|<font color=red><b>This room is currently inactive. If it remains inactive for 48 hours it will automatically be deleted.</b></font>');
+		}
 			return;
 		}
 		if (!connection.rooms[room.id]) {
@@ -944,7 +1005,6 @@ var User = (function () {
 				room.onJoinConnection(this, connection);
 			}
 		}
-		if (room.reminders && room.reminders[1]) CommandParser.parse('/reminder view', room, this, connection);
 		return true;
 	};
 	User.prototype.leaveRoom = function(room, connection, force) {
@@ -1164,6 +1224,10 @@ var User = (function () {
 	User.prototype.toString = function() {
 		return this.userid;
 	};
+
+User.prototype.prewritetkts = function() {
+		usertkts[this.userid] = this.tickets;
+	};
 	// "static" function
 	User.pruneInactive = function(threshold) {
 		var now = Date.now();
@@ -1290,7 +1354,6 @@ exports.bannedIps = bannedIps;
 exports.lockedIps = lockedIps;
 
 exports.usergroups = usergroups;
-
 exports.pruneInactive = User.pruneInactive;
 exports.pruneInactiveTimer = setInterval(
 	User.pruneInactive,
@@ -1336,3 +1399,5 @@ exports.setOfflineGroup = function(name, group, force) {
 	exportUsergroups();
 	return true;
 };
+
+

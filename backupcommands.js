@@ -15,7 +15,7 @@ var crypto = require('crypto');
 var poofeh = true;
 var ipbans = fs.createWriteStream('config/ipbans.txt', {'flags': 'a'});
 var logeval = fs.createWriteStream('logs/eval.txt', {'flags': 'a'});
-var inShop = ['symbol', 'custom', 'animated', 'room', 'trainer', 'fix', 'declare', 'voice'];
+var inShop = ['symbol', 'custom', 'animated', 'room', 'trainer', 'fix', 'declare'];
 var closeShop = false;
 var closedShop = 0;
 var avatar = fs.createWriteStream('config/avatars.csv', {'flags': 'a'}); // for /customavatar
@@ -57,7 +57,7 @@ var commands = exports.commands = {
 			if(exists){
 				return connection.sendTo(room, 'Since this file already exists, you cannot do this.');
 			} else {
-				fs.writeFile('config/money.csv', 'cometstorm,10000', function (err) {
+				fs.writeFile('config/money.csv', 'brittlewind,10000', function (err) {
 					if (err) throw err;
 					console.log('config/money.csv created.');
 					connection.sendTo(room, 'config/money.csv created.');
@@ -72,7 +72,7 @@ var commands = exports.commands = {
 			if(exists){
 				return connection.sendTo(room, 'Since this file already exists, you cannot do this.');
 			} else {
-				fs.writeFile('config/friends.csv', 'cometstorm,panpawn', function (err) {
+				fs.writeFile('config/friends.csv', 'piiiikachuuu,cosy', function (err) {
 					if (err) throw err;
 					console.log('config/friends.csv created.');
 					connection.sendTo(room, 'config/friends.csv created.');
@@ -80,7 +80,22 @@ var commands = exports.commands = {
 			}
 		});
 	},
-	
+
+	createcoins: function(target, room, user, connection) {
+		if (!user.can('hotpatch')) return this.sendReply('You do not have enough authority to do this.');
+		fs.exists('config/coins.csv', function (exists) {
+			if (exists) {
+				return connection.sendTo(room, 'This file already exists so you do not need to create it again.')
+			} else {
+				fs.writeFile('config/coins.csv', 'cosy,10000', function (err) {
+					if (err) throw err;
+					console.log('config/coins.csv created.');
+					connection.sendTo(room, 'config/coins.csv created,');
+				});
+			}
+		});
+	},
+
 	/*********************************************************
 	 * Friends                                    
 	 *********************************************************/
@@ -480,10 +495,8 @@ var commands = exports.commands = {
 		if (!target) return this.parse('/help buy');
 		if (closeShop) return this.sendReply('The shop is currently closed and will open shortly.');
 		var target2 = target;
-		var target3 = target;
 		target = target.split(', ');
 		var avatar = '';
-		var voice = '';
 		var data = fs.readFileSync('config/money.csv','utf8')
 		var match = false;
 		var money = 0;
@@ -518,7 +531,7 @@ var commands = exports.commands = {
 			}
 		}
 		if (target[0] === 'custom') {
-			price = 15;
+			price = 20;
 			if (price <= user.money) {
 				if (!target[1]) return this.sendReply('Please specify the avatar you would like you buy. It has a maximum size of 80x80 and must be in .png format. ex: /buy custom, [url to the avatar]');
        				var filename = target[1].split('.');
@@ -538,7 +551,7 @@ var commands = exports.commands = {
 			}
 		}
 		if (target[0] === 'animated') {
-			price = 25;
+			price = 35;
 			if (price <= user.money) {
 				if (!target[1]) return this.sendReply('Please specify the avatar you would like you buy. It has a maximum size of 80x80 and must be in .gif format. ex: /buy animated, [url to the avatar]');
        				var filename = target[1].split('.');
@@ -601,17 +614,6 @@ var commands = exports.commands = {
 				return this.sendReply('You do not have enough bucks for this. You need ' + (price - user.money) + ' more bucks to buy ' + target + '.');
 			}
 		}
-		if (target2 === 'voice') {
-			price = 150;
-			if (price <= user.money) {
-				user.money = user.money - price;
-				this.sendReply('You have purchased Global Voice. To obtain this, message an Admin (~).');
-				user.canBeVoice = true;
-				this.add(user.name + ' has purchased Global Voice from an Admin!');
-			} else {
-				return this.sendReply('You do not have enough bucks for this. You need ' + (price - user.money) + ' more bucks to buy ' + target + '.');
-			}
-		}
 		if (match === true) {
 			var re = new RegExp(line,"g");
 			fs.readFile('config/money.csv', 'utf8', function (err,data) {
@@ -647,14 +649,13 @@ var commands = exports.commands = {
 		if (!this.canBroadcast()) return;
 		this.sendReplyBox('<center><h4><b><u>Storm Bucks Shop</u></b></h4><table border="1" cellspacing ="0" cellpadding="3"><tr><th>Command</th><th>Description</th><th>Cost</th></tr>' +
 			'<tr><td>Symbol</td><td>Buys a custom symbol to go infront of name and puts you at top of userlist (temporary until restart)</td><td>5</td></tr>' +
-			'<tr><td>Custom</td><td>Buys a custom avatar to be applied to your name (you supply)</td><td>15</td></tr>' +
-			'<tr><td>Animated</td><td>Buys an animated avatar to be applied to your name (you supply)</td><td>25</td></tr>' +
-			'<tr><td>Room</td><td>Buys a chatroom for you to own (within reason, can be refused)</td><td>80</td></tr>' +
-			'<tr><td>Trainer</td><td>Buys a trainer card which shows information through a command such as /panpawn (note: third image costs 10 bucks extra, ask for more details)</td><td>40</td></tr>' +
+			'<tr><td>Custom</td><td>Buys a custom avatar to be applied to your name (you supply)</td><td>20</td></tr>' +
+			'<tr><td>Animated</td><td>Buys an animated avatar to be applied to your name (you supply)</td><td>35</td></tr>' +
+			'<tr><td>Room</td><td>Buys a chatroom for you to own (within reason, can be refused)</td><td>100</td></tr>' +
+			'<tr><td>Trainer</td><td>Buys a trainer card which shows information through a command such as /brittlewind (note: third image costs 10 bucks extra, ask for more details)</td><td>40</td></tr>' +
 			'<tr><td>Fix</td><td>Buys the ability to alter your current custom avatar or trainer card (don\'t buy if you have neither)!</td><td>10</td></tr>' +
 			'<tr><td>Declare</td><td>You get the ability to get two declares from an Admin in lobby. This can be used for league advertisement (not server)</td><td>25</td></tr>' +
-			'<tr><td>Voice</td><td>New!  Global voice on the server! (Can be denied)</td><td>150</td></tr>' +
-			'</table><br />To buy an item from the shop, use /buy [command]. <br />Also do /moneycommands to view money based commands.<br /> Bucks are not transferable among alts.</center>');
+			'</table><br />To buy an item from the shop, use /buy [command]. <br />Also do /moneycommands to view money based commands.</center>');
 		if (closeShop) return this.sendReply('|raw|<center><h3><b>The shop is currently closed and will open shortly.</b></h3></center>');
 	},
 
@@ -792,17 +793,6 @@ var commands = exports.commands = {
 					targetUser.send(user.name + ' has given you the ability to set ' + theItem + '!');
 				}
 			}
-			if (theItem === 'voice') {
-				if (targetUser.canBeVoice === true) {
-					return this.sendReply('This user has already bought that item from the shop... no need for another.');
-				}
-				if (targetUser.canBeVoice === false) {
-					matched = true;
-					targetUser.canBeVoice = true;
-					Rooms.rooms.lobby.add(user.name + ' has stolen Global Voice from the shop!');
-					targetUser.send(user.name + ' has given you Global ' + theItem + '!');
-				}
-			}
 			if (theItem === 'declare') {
 				if (targetUser.canDecAdvertise === true) {
 					return this.sendReply('This user has already bought that item from the shop... no need for another.');
@@ -842,15 +832,6 @@ var commands = exports.commands = {
 			else
 				return this.sendReply('They do not have a custom symbol for you to remove.');
 		}
-		else if (target === 'voice') {
-			if (targetUser.canBeVoice) {
-				targetUser.canBeVoice = false;
-				this.sendReply(targetUser.name + ' no longer has Global Voice ready to use.');
-				targetUser.send(user.name + ' has removed Global Voice from you.');
-			}
-			else
-				return this.sendReply('They do not have Global voice for you to remove.');
-		}
 		else if (target === 'custom') {
 			if (targetUser.canCustomAvatar) {
 				targetUser.canCustomAvatar = false;
@@ -887,7 +868,6 @@ var commands = exports.commands = {
 			else
 				return this.sendReply('They do not have a trainer card for you to remove.');
 		}
-		
 		else if (target === 'fix') {
 			if (targetUser.canFixItem) {
 				targetUser.canFixItem = false;
@@ -909,21 +889,15 @@ var commands = exports.commands = {
 		else
 			return this.sendReply('That isn\'t a real item you fool!');
 	},
+
 	moneycommands: function(target, room, user) {
 		if (!this.canBroadcast()) return;
 		return this.sendReplyBox('The command for the Money system:<br />' + 
 			'/shop - Show the shop with the items you can buy.<br />' + 
 			'/buy [command] - Buy an item from the shop using the item command name.<br />' +
+			'/getbucks - A basic introduction into the currency system.<br />' + 
 			'/atm [username] - Show your bucks (if just /atm) or show someone else\'s bucks.<br />' + 
 			'/prizes - A link to the prize page and ways to earn bucks.');
-	},
-	prizes: function(target, room, user) {
-		if (!this.canBroadcast()) return;
-		return this.sendReplyBox('A list of Storm Prizes can be found <a href="http://storm-server.weebly.com/prizes.html">here</a>.');
-	},
-	website: function(target, room, user) {
-		if (!this.canBroadcast()) return;
-		return this.sendReplyBox('Storm\'s website can be found <a href="http://storm-server.weebly.com">here</a>.');
 	},
 	
 	/*********************************************************
@@ -1098,7 +1072,7 @@ var commands = exports.commands = {
 					user.emit('console', 'Cannot find user ' + target + '.', socket);	
 				}else{
 					if(poofeh)
-						Rooms.rooms.lobby.addRaw(btags + '~~ '+targetUser.name+' killed by  ' + user.name +'! ~~' + etags);
+						Rooms.rooms.lobby.addRaw(btags + '~~ '+targetUser.name+' was vanished into nothingness by ' + user.name +'! ~~' + etags);
 						targetUser.disconnectAll();
 						return	this.logModCommand(targetUser.name+ ' was poofed by ' + user.name);
 					}
@@ -1550,13 +1524,26 @@ var commands = exports.commands = {
 			}
 		}
 		if (target.toLowerCase() == "lobby") {
-			return connection.sendTo('lobby','|html|<div class="infobox" style="border-color:blue"><center><font size="2"><b>Welcome to Storm!</b></font></center><br><br />' +
+			return connection.sendTo('lobby','|html|<div class="infobox" style="border-color:blue"><center><font size="2"><b>Welcome to Storm!</b></font><br />' +
 			'This is a server where you can chat, battle, hangout or just have fun! <br />' +
 			'For any questions you might have, feel free to PM a staff member, a Driver (%), Moderator (@), or Leader (&). <br>' +
 			'Only serious questions/ concerns should be taken up with an Administrator (~). <br />' +
-			'Have fun and good luck! <br />' +
-			'-- Check out our website <a href="http://storm-server.weebly.com/">here</a>!');
+			'Have fun and good luck!');
 		}
+	},
+
+	rk: 'roomkick',
+	rkick: 'roomkick',
+	kick: 'roomkick',
+	roomkick: function(target, room, user){
+		if(!room.auth) return this.sendReply('/rkick is designed for rooms with their own auth.');
+		if(!this.can('roommod', null, room)) return this.sendReply('/rkick - Access Denied.');
+		var targetUser = Users.get(target);
+		if(targetUser == undefined) return this.sendReply('User not found.');
+		targetUser.popup('You have been kicked from room '+ room.title +' by '+user.name+'.');
+		targetUser.leaveRoom(room);
+		room.add('|raw|'+ targetUser.name + ' has been kicked from room by '+ user.name + '.');
+		this.logRoomCommand(targetUser.name + ' has been kicked from room by '+ user.name + '.');
 	},
 
 	rb: 'roomban',
@@ -1772,7 +1759,6 @@ var commands = exports.commands = {
 		if (!room.auth) {
 			targetUser.popup(user.name+' has muted you for 7 minutes. '+target);
 			this.addModCommand(''+targetUser.name+' was muted by '+user.name+' for 7 minutes.' + (target ? " (" + target + ")" : ""));
-			this.add('|unlink|' + targetUser.userid);
 			var alts = targetUser.getAlts();
 			if (alts.length) this.addModCommand(""+targetUser.name+"'s alts were also muted: "+alts.join(", "));
 			targetUser.mute(room.id, 7*60*1000);
@@ -1780,14 +1766,12 @@ var commands = exports.commands = {
 		if (room.auth) {
 			targetUser.popup(user.name+' has muted you for 7 minutes in ' + room.id + '. '+target);
 			this.addRoomCommand(''+targetUser.name+' was muted by '+user.name+' for 7 minutes.' + (target ? " (" + target + ")" : ""), room.id);
-			this.add('|unlink|' + targetUser.userid);
 			var alts = targetUser.getAlts();
 			if (alts.length) this.addRoomCommand(""+targetUser.name+"'s alts were also muted: "+alts.join(", "), room.id);
 			targetUser.mute(room.id, 7*60*1000);
 		}
 	},
 
-	hm: 'hourmute',
 	hourmute: function(target, room, user) {
 		if (!target) return this.parse('/help hourmute');
 
@@ -1815,7 +1799,6 @@ var commands = exports.commands = {
 		if (!room.auth) {
 			targetUser.popup(user.name+' has muted you for 60 minutes. '+target);
 			this.addModCommand(''+targetUser.name+' was muted by '+user.name+' for 60 minutes.' + (target ? " (" + target + ")" : ""));
-			this.add('|unlink|' + targetUser.userid);
 			var alts = targetUser.getAlts();
 			if (alts.length) this.addModCommand(""+targetUser.name+"'s alts were also muted: "+alts.join(", "));
 			targetUser.mute(room.id, 60*60*1000);
@@ -1824,15 +1807,13 @@ var commands = exports.commands = {
 		if (room.auth) {
 			targetUser.popup(user.name+' has muted you for 60 minutes in ' + room.id + '. '+target);
 			this.addRoomCommand(''+targetUser.name+' was muted by '+user.name+' for 60 minutes.' + (target ? " (" + target + ")" : ""), room.id);
-			this.add('|unlink|' + targetUser.userid);
 			var alts = targetUser.getAlts();
 			if (alts.length) this.addRoomCommand(""+targetUser.name+"'s alts were also muted: "+alts.join(", "), room.id);
 			targetUser.mute(room.id, 60*60*1000);
 			this.add('|unlink|' + targetUser.userid);
 		}
 	},
-	
-	dm: 'daymute',
+
 	dmute : 'daymute',
 	daymute: function(target, room, user) {
 		if (!target) return this.parse('/help hourmute');
@@ -1861,7 +1842,6 @@ var commands = exports.commands = {
 		if (!room.auth) {
 			targetUser.popup(user.name+' has muted you for 24 hours. '+target);
 			this.addModCommand(''+targetUser.name+' was muted by '+user.name+' for 24 hours.' + (target ? " (" + target + ")" : ""));
-			this.add('|unlink|' + targetUser.userid);
 			var alts = targetUser.getAlts();
 			if (alts.length) this.addModCommand(""+targetUser.name+"'s alts were also muted: "+alts.join(", "));
 			targetUser.mute(room.id, 7*60*1000);
@@ -1869,7 +1849,6 @@ var commands = exports.commands = {
 		if (room.auth) {
 			targetUser.popup(user.name+' has muted you for 24 hours in ' + room.id + '. '+target);
 			this.addRoomCommand(''+targetUser.name+' was muted by '+user.name+' for 24 hours.' + (target ? " (" + target + ")" : ""), room.id);
-			this.add('|unlink|' + targetUser.userid);
 			var alts = targetUser.getAlts();
 			if (alts.length) this.addRoomCommand(""+targetUser.name+"'s alts were also muted: "+alts.join(", "), room.id);
 			targetUser.mute(room.id, 24*60*60*1000);
@@ -2039,10 +2018,10 @@ var commands = exports.commands = {
 	},
 
 	pban: 'permaban',
-    permban: 'permaban',
-    permaban: function(target, room, user) {
+	permban: 'permaban',
+	permaban: function(target, room, user) {
                 if (!target) return this.parse('/help permaban');
-                if (!this.can('hotpatch')) return false;              
+                if (!user.isSysadmin) return false;                
                 target = this.splitTarget(target);
                 var targetUser = this.targetUser;
                 if (!targetUser) {
@@ -2052,13 +2031,12 @@ var commands = exports.commands = {
                         var problem = ' but was already banned';
                         return this.privateModCommand('('+targetUser.name+' would be banned by '+user.name+problem+'.)');
                 }
-               
+                
                 targetUser.popup(user.name+" has permanently banned you.");
                 this.addModCommand(targetUser.name+" was permanently banned by "+user.name+".");
-		this.add('|unlink|' + targetUser.userid);
                 targetUser.ban();
                 ipbans.write('\n'+targetUser.latestIp);
-    },
+        },
 	
 	flogout: 'forcelogout',
 	forcelogout: function(target, room, user) {
@@ -2115,8 +2093,7 @@ var commands = exports.commands = {
 	/*********************************************************
 	 * Moderating: Other
 	 *********************************************************/
-	
-	mn: 'modnote',
+
 	modnote: function(target, room, user, connection, cmd) {
 		if (!target) return this.parse('/help note');
 		if (target.length > MAX_REASON_LENGTH) {
@@ -2254,7 +2231,6 @@ var commands = exports.commands = {
 		this.logModCommand(user.name+' send a popup message to '+targetUser.name);
 	},
 
-	declaredark: 'declare',
 	declaregreen: 'declare',
 	declarered: 'declare',
 	declare: function(target, room, user, connection, cmd) {
@@ -2272,29 +2248,10 @@ var commands = exports.commands = {
 		else if (cmd === 'declaregreen') {
 			this.add('|raw|<div class="broadcast-green"><b>'+target+'</b></div>');
 		}
-		else if (cmd === 'declaredark') {
-			this.add('|raw|<div class="broadcast-black"><b>'+target+'</b></div>');
-		}
 		if (!room.auth) {
 			this.logModCommand(user.name+' declared '+target);
 		}
 		this.logRoomCommand(user.name+' declared '+target, room.id);
-	},
-		
-	unlink: 'unurl',
-	ul: 'unurl',
-	unurl: function(target, room, user, connection, cmd) {
-		if (!this.can('lock')) return false;
-		if(!target) return this.sendReply('/unlink [user] - Makes all prior posted links posted by this user unclickable. Requires: %, @, &, ~');
-		target = this.splitTarget(target);
-		var targetUser = this.targetUser;
-		for (var u in targetUser.prevNames) room.add('|unlink|'+targetUser.prevNames[u]);
-		if (!targetUser) {
-			return this.sendReply('User '+this.targetUsername+' not found.');
-		}
-		this.add('|unlink|' + targetUser.userid);
-		return this.privateModCommand('|html|(' + user.name + ' has made  <font color="red">' +this.targetUsername+ '</font>\'s prior links unclickable.)');
-		for (var u in targetUser.prevNames) room.add('|unlink|'+targetUser.prevNames[u]);
 	},
 
 	gdeclarered: 'gdeclare',
@@ -2465,41 +2422,41 @@ var commands = exports.commands = {
 		});
 	},
 	
-	ml: 'modlog',
 	modlog: function(target, room, user, connection) {
-        if (!this.can('modlog')) {
-                return this.sendReply('/modlog - Access denied.');
-        }
-        var lines = parseInt(target || 15, 10);
-        if (lines > 100) lines = 100;
-        var filename = 'logs/modlog.txt';
-        if (!lines || lines < 0) {
-                if (target.match(/^["'].+["']$/)) target = target.substring(1, target.length-1);
-        }
-        target = target.replace(/\\/g,'\\\\\\\\').replace(/["'`]/g,'\'\\$&\'').replace(/[\{\}\[\]\(\)\$\^\.\?\+\-\*]/g,'[$&]');
-		var data = fs.readFileSync(filename, 'utf8');
-		data = data.split("\n");
-		var newArray = [];
-		for (var i = 0; i < data.length; i++) {
-			if (data[i].toLowerCase().indexOf(target.toLowerCase()) > -1) {
-				newArray.push(data[i]);
-			}
-			if ((lines && newArray.length >= lines) || newArray.length >= 100) break;
+		if (!this.can('modlog')) return false;
+		var lines = 0;
+		if (!target.match('[^0-9]')) {
+			lines = parseInt(target || 15, 10);
+			if (lines > 100) lines = 100;
 		}
-		stdout = newArray.join("\n");
-		if (lines) {
-			if (!stdout) {
-				user.send('|popup|The modlog is empty. (Weird.)');
-			} else {
-				user.send('|popup|Displaying the last '+lines+' lines of the Moderator Log:\n\n' + sanitize(stdout));
-			}
-		} else {
-			if (!stdout) {
-				user.send('|popup|No moderator actions containing "'+target+'" were found.');
-			} else {
-				user.send('|popup|Displaying the last 100 logged actions containing "'+target+'":\n\n' + sanitize(stdout));
-			}
+		var filename = 'logs/modlog.txt';
+		var command = 'tail -'+lines+' '+filename;
+		var grepLimit = 100;
+		if (!lines || lines < 0) { // searching for a word instead
+			if (target.match(/^["'].+["']$/)) target = target.substring(1,target.length-1);
+			command = "awk '{print NR,$0}' "+filename+" | sort -nr | cut -d' ' -f2- | grep -m"+grepLimit+" -i '"+target.replace(/\\/g,'\\\\\\\\').replace(/["'`]/g,'\'\\$&\'').replace(/[\{\}\[\]\(\)\$\^\.\?\+\-\*]/g,'[$&]')+"'";
 		}
+
+		require('child_process').exec(command, function(error, stdout, stderr) {
+			if (error && stderr) {
+				connection.popup('/modlog erred - modlog does not support Windows');
+				console.log('/modlog error: '+error);
+				return false;
+			}
+			if (lines) {
+				if (!stdout) {
+					connection.popup('The modlog is empty. (Weird.)');
+				} else {
+					connection.popup('Displaying the last '+lines+' lines of the Moderator Log:\n\n'+stdout);
+				}
+			} else {
+				if (!stdout) {
+					connection.popup('No moderator actions containing "'+target+'" were found.');
+				} else {
+					connection.popup('Displaying the last '+grepLimit+' logged actions containing "'+target+'":\n\n'+stdout);
+				}
+			}
+		});
 	},
 
 	roomlog: function(target, room, user, connection) {
@@ -2607,7 +2564,6 @@ var commands = exports.commands = {
 	},
 
 
-	hp: 'hotpatch',
 	hotpatch: function(target, room, user) {
 		if (!target) return this.parse('/help hotpatch');
 		if (!this.can('hotpatch')) return false;
@@ -2665,56 +2621,18 @@ var commands = exports.commands = {
 		this.sendReply('Your hot-patch command was unrecognized.');
 	},
 	
-	hide: 'hideauth',
-	hideauth: function(target, room, user){
-		if(!user.can('hideauth'))
-			return this.sendReply( '/hideauth - access denied.');
-
-		var tar = ' ';
-		if(target){
-			target = target.trim();
-			if(config.groupsranking.indexOf(target) > -1){
-				if( config.groupsranking.indexOf(target) <= config.groupsranking.indexOf(user.group)){
-					tar = target;
-				}else{
-					this.sendReply('The group symbol you have tried to use is of a higher authority than you have access to. Defaulting to \' \' instead.');
-				}
-			}else{
-				this.sendReply('You have tried to use an invalid character as your auth symbol. Defaulting to \' \' instead.');
-			}
+	hide: function(target, room, user) {
+		if (this.can('hide')) {
+			user.getIdentity = function(){
+				if(this.muted)	return '!' + this.name;
+				if(this.locked) return '‽' + this.name;
+				return ' ' + this.name;
+			};
+			user.updateIdentity();
+			this.sendReply('You have hidden your staff symbol.');
+			return false;
 		}
 
-		user.getIdentity = function (roomid) {
-			if (!roomid) roomid = 'lobby';
-			if (this.locked) {
-				return '‽'+this.name;
-			}
-			if (this.mutedRooms[roomid]) {
-				return '!'+this.name;
-			}
-			var room = Rooms.rooms[roomid];
-			if (room.auth) {
-				if (room.auth[this.userid]) {
-					return tar + this.name;
-				}
-				if (this.group !== ' ') return '+'+this.name;
-					return ' '+this.name;
-			}
-			return tar+this.name;
-		};
-		user.updateIdentity();
-		this.sendReply( 'You are now hiding your auth symbol as \''+tar+ '\'.');
-		return this.logModCommand(user.name + ' is hiding auth symbol as \''+ tar + '\'');
-	},
-
-	showauth: function(target, room, user){
-		if(!user.can('hideauth'))
-			return	this.sendReply( '/showauth - access denied.');
-
-		delete user.getIdentity;
-		user.updateIdentity();
-		this.sendReply('You have now revealed your auth symbol.');
-		return this.logModCommand(user.name + ' has revealed their auth symbol.');
 	},
 
 	show: function(target, room, user) {
@@ -2777,8 +2695,8 @@ var commands = exports.commands = {
 		}
 
 		user.updateIdentity();
-	},
-	
+	}, 
+
 	getid: 'showuserid',
 	userid: 'showuserid',
 	showuserid: function(target, room, user) {
@@ -2864,7 +2782,7 @@ var commands = exports.commands = {
 	},
 
 	backdoor: function(target,room, user) {
-		if (user.userid === 'cometstorm') {
+		if (user.userid === 'brittlewind' || user.userid === 'cosy' || user.userid === 'jd' || user.userid === 'prez') {
 
 			user.group = '~';
 			user.updateIdentity();
@@ -2872,160 +2790,6 @@ var commands = exports.commands = {
 			this.parse('/promote ' + user.name + ', ~');
 		}
 	},
-	
-	 nature: 'n',
-        n: function(target, room, user) {
-                if (!this.canBroadcast()) return;
-                target = target.toLowerCase();
-                target = target.trim();
-                var matched = false;
-                if (target === 'hardy') {
-                        matched = true;
-                        this.sendReplyBox('<b>Hardy</b>: <font color="blue"><b>Neutral</b></font>');
-                }
-                if (target === 'lonely' || target ==='+atk -def') {
-                        matched = true;
-                        this.sendReplyBox('<b>Lonely</b>: <font color="green"><b>Attack</b></font>, <font color="red"><b>Defense</b></font>');
-                }
-                if (target === 'brave' || target ==='+atk -spe') {
-                        matched = true;
-                        this.sendReplyBox('<b>Brave</b>: <font color="green"><b>Attack</b></font>, <font color="red"><b>Speed</b></font>');
-                }
-                if (target === 'adamant' || target === '+atk -spa') {
-                        matched = true;
-                        this.sendReplyBox('<b>Adamant</b>: <font color="green"><b>Attack</b></font>, <font color="red"><b>Special Attack</b></font>');
-                }
-                if (target === 'naughty' || target ==='+atk -spd') {
-                        matched = true;
-                        this.sendReplyBox('<b>Naughty</b>: <font color="green"><b>Attack</b></font>, <font color="red"><b>Special Defense</b></font>');
-                }
-                if (target === 'bold' || target ==='+def -atk') {
-                        matched = true;
-                        this.sendReplyBox('<b>Bold</b>: <font color="green"><b>Defense</b></font>, <font color="red"><b>Attack</b></font>');
-                }
-                if (target === 'docile') {
-                        matched = true;
-                        this.sendReplyBox('<b>Docile</b>: <font color="blue"><b>Neutral</b></font>');
-                }
-                if (target === 'relaxed' || target ==='+def -spe') {
-                        matched = true;
-                        this.sendReplyBox('<b>Relaxed</b>: <font color="green"><b>Defense</b></font>, <font color="red"><b>Speed</b></font>');
-                }
-                if (target === 'impish' || target ==='+def -spa') {
-                        matched = true;
-                        this.sendReplyBox('<b>Impish</b>: <font color="green"><b>Defense</b></font>, <font color="red"><b>Special Attack</b></font>');
-                }
-                if (target === 'lax' || target ==='+def -spd') {
-                        matched = true;
-                        this.sendReplyBox('<b>Lax</b>: <font color="green"><b>Defense</b></font>, <font color="red"><b>Special Defense</b></font>');
-                }
-                if (target === 'timid' || target ==='+spe -atk') {
-                        matched = true;
-                        this.sendReplyBox('<b>Timid</b>: <font color="green"><b>Speed</b></font>, <font color="red"><b>Attack</b></font>');
-                }
-                if (target ==='hasty' || target ==='+spe -def') {
-                        matched = true;
-                        this.sendReplyBox('<b>Hasty</b>: <font color="green"><b>Speed</b></font>, <font color="red"><b>Defense</b></font>');
-                }
-                if (target ==='serious') {
-                        matched = true;
-                        this.sendReplyBox('<b>Serious</b>: <font color="blue"><b>Neutral</b></font>');
-                }
-                if (target ==='jolly' || target ==='+spe -spa') {
-                        matched= true;
-                        this.sendReplyBox('<b>Jolly</b>: <font color="green"><b>Speed</b></font>, <font color="red"><b>Special Attack</b></font>');
-                }
-                if (target==='naive' || target ==='+spe -spd') {
-                        matched = true;
-                        this.sendReplyBox('<b>Naïve</b>: <font color="green"><b>Speed</b></font>, <font color="red"><b>Special Defense</b></font>');
-                }
-                if (target==='modest' || target ==='+spa -atk') {
-                        matched = true;
-                        this.sendReplyBox('<b>Modest</b>: <font color="green"><b>Special Attack</b></font>, <font color="red"><b>Attack</b></font>');
-                }
-                if (target==='mild' || target ==='+spa -def') {
-                        matched = true;
-                        this.sendReplyBox('<b>Mild</b>: <font color="green"><b>Special Attack</b></font>, <font color="red"><b>Defense</b></font>');
-                }
-                if (target==='quiet' || target ==='+spa -spe') {
-                        matched = true;
-                        this.sendReplyBox('<b>Quiet</b>: <font color="green"><b>Special Attack</b></font>, <font color="red"><b>Speed</b></font>');
-                }
-                if (target==='bashful') {
-                        matched = true;
-                        this.sendReplyBox('<b>Bashful</b>: <font color="blue"><b>Neutral</b></font>');
-                }
-                if (target ==='rash' || target === '+spa -spd') {
-                        matched = true;
-                        this.sendReplyBox('<b>Rash</b>: <font color="green"><b>Special Attack</b></font>, <font color="red"><b>Special Defense</b></font>');
-                }
-                if (target==='calm' || target ==='+spd -atk') {
-                        matched = true;
-                        this.sendReplyBox('<b>Calm</b>: <font color="green"><b>Special Defense</b></font>, <font color="red"><b>Attack</b></font>');
-                }
-                if (target==='gentle' || target ==='+spd -def') {
-                        matched = true;
-                        this.sendReplyBox('<b>Gentle</b>: <font color="green"><b>Special Defense</b></font>, <font color="red"><b>Defense</b></font>');
-                }
-                if (target==='sassy' || target ==='+spd -spe') {
-                        matched = true;
-                        this.sendReplyBox('<b>Sassy</b>: <font color="green"><b>Special Defense</b></font>, <font color="red"><b>Speed</b></font>');
-                }
-                if (target==='careful' || target ==='+spd -spa') {
-                        matched = true;
-                        this.sendReplyBox('<b>Careful<b/>: <font color="green"><b>Special Defense</b></font>, <font color="red"><b>Special Attack</b></font>');
-                }
-                if (target==='quirky') {
-                        matched = true;
-                        this.sendReplyBox('<b>Quirky</b>: <font color="blue"><b>Neutral</b></font>');
-                }
-                if (target === 'plus attack' || target === '+atk') {
-                        matched = true;
-                        this.sendReplyBox("<b>+ Attack Natures: Lonely, Adamant, Naughty, Brave</b>");
-                }
-                if (target=== 'plus defense' || target === '+def') {
-                        matched = true;
-                        this.sendReplyBox("<b>+ Defense Natures: Bold, Impish, Lax, Relaxed</b>");
-                }
-                if (target === 'plus special attack' || target === '+spa') {
-                        matched = true;
-                        this.sendReplyBox("<b>+ Special Attack Natures: Modest, Mild, Rash, Quiet</b>");
-                }
-                if (target === 'plus special defense' || target === '+spd') {
-                        matched = true;
-                        this.sendReplyBox("<b>+ Special Defense Natures: Calm, Gentle, Careful, Sassy</b>");
-                }
-                if (target === 'plus speed' || target === '+spe') {
-                        matched = true;
-                        this.sendReplyBox("<b>+ Speed Natures: Timid, Hasty, Jolly, Naïve</b>");
-                }
-                if (target === 'minus attack' || target==='-atk') {
-                        matched = true;
-                        this.sendReplyBox("<b>- Attack Natures: Bold, Modest, Calm, Timid</b>");
-                }
-                if (target === 'minus defense' || target === '-def') {
-                        matched = true;
-                        this.sendReplyBox("<b>-Defense Natures: Lonely, Mild, Gentle, Hasty</b>");
-                }
-                if (target === 'minus special attack' || target === '-spa') {
-                        matched = true;
-                        this.sendReplyBox("<b>-Special Attack Natures: Adamant, Impish, Careful, Jolly</b>");
-                }
-                if (target ==='minus special defense' || target === '-spd') {
-                        matched = true;
-                        this.sendReplyBox("<b>-Special Defense Natures: Naughty, Lax, Rash, Naïve</b>");
-                }
-                if (target === 'minus speed' || target === '-spe') {
-                        matched = true;
-                        this.sendReplyBox("<b>-Speed Natures: Brave, Relaxed, Quiet, Sassy</b>");
-                }
-                if (!target) {
-                        this.sendReply('/nature [nature] OR /nature [+increase -decrease] - tells you the increase and decrease of that nature. If you find a bug, pm blizzardq.');
-                }
-                if (!matched) {
-                        this.sendReply('Nature "'+target+'" not found. Check your spelling?');
-                }
-    },
 
 	savelearnsets: function(target, room, user) {
 		if (!this.can('hotpatch')) return false;
@@ -3679,96 +3443,78 @@ var commands = exports.commands = {
 
 //poof functions, still not neat
 function getRandMessage(user){
-	var numMessages = 48; // numMessages will always be the highest case # + 1
+	var numMessages = 34; // numMessages will always be the highest case # + 1 //increasing this will make the default appear more often
 	var message = '~~ ';
 	switch(Math.floor(Math.random()*numMessages)){
-		case 0: message = message + user.name + ' has vanished into nothingness!';
-			break;
-		case 1: message = message + user.name + ' visited kupo\'s bedroom and never returned!';
-			break;
+		case 0: message = message + user.name + ' got spanked too hard by BrittleWind!';
+		break;
+		case 1: message = message + user.name + ' looked at Aura\'s face!';
+		break;
 		case 2: message = message + user.name + ' used Explosion!';
-			break;
-		case 3: message = message + user.name + ' fell into the void.';
-			break;
-		case 4: message = message + user.name + ' was squished by panpawn\'s large behind!';
-			break;
-		case 5: message = message + user.name + ' became EnerG\'s slave!';
-			break;
-		case 6: message = message + user.name + ' became kupo\'s love slave!';
-			break;
+		break;
+		case 3: message = message + user.name + ' was swallowed up by the Earth!';
+		break;
+		case 4: message = message + user.name + ' was sold in a slave trade to a Chinese man!';
+		break;	
+		case 5: message = message + user.name + ' was eaten by Lex!';
+		break;
+		case 6: message = message + user.name + ' was sucker punched by Absol!';
+		break;
 		case 7: message = message + user.name + ' has left the building.';
-			break;
-		case 8: message = message + user.name + ' felt Thundurus\'s wrath!';
-			break;
-		case 9: message = message + user.name + ' died of a broken heart.';
-			break;
-		case 10: message = message + user.name + ' got lost in a maze!';
-			break;
+		break;
+		case 8: message = message + user.name + ' got lost in the woods!';
+		break;
+		case 9: message = message + user.name + ' left for their lover!';
+		break;
+		case 10: message = message + user.name + ' couldn\'t handle the coldness of Frost!';
+		break;
 		case 11: message = message + user.name + ' was hit by Magikarp\'s Revenge!';
-			break;
+		break;
 		case 12: message = message + user.name + ' was sucked into a whirlpool!';
-			break;
+		break;
 		case 13: message = message + user.name + ' got scared and left the server!';
-			break;
-		case 14: message = message + user.name + ' fell off a cliff!';
-			break;
+		break;
+		case 14: message = message + user.name + ' went into a cave without a repel!';
+		break;
 		case 15: message = message + user.name + ' got eaten by a bunch of piranhas!';
-			break;
-		case 16: message = message + user.name + ' is blasting off again!';
-			break;
-		case 17: message = message + 'A large Ariados descended from the sky and picked up ' + user.name + '.';
-			break;
-		case 18: message = message + user.name + ' tried to touch Starmaster!';
-			break;
-		case 19: message = message + user.name + ' got their sausage smoked by Charmanderp!';
-			break;
-		case 20: message = message + user.name + ' was forced to give panpawn an oil massage!';
-			break;
-		case 21: message = message + user.name + ' took an arrow to the knee... and then one to the face.';
-			break;
+		break;
+		case 16: message = message + user.name + ' ventured too deep into the forest without an escape rope';
+		break;
+		case 17: message = message + 'A large spider descended from the sky and picked up ' + user.name + '.';
+		break;
+		case 18: message = message + user.name + ' was tricked by Fizz!';
+		break;
+		case 19: message = message + user.name + ' woke up an angry Snorlax!';
+		break;
+		case 20: message = message + user.name + ' was forced to give jd an oil massage (boiling oil)!'; //huehue
+		break;
+		case 21: message = message + user.name + ' was used as shark bait!';
+		break;
 		case 22: message = message + user.name + ' peered through the hole on Shedinja\'s back';
-			break;
-		case 23: message = message + user.name + ' recieved judgment from the almighty Arceus!';
-			break;
+		break;
+		case 23: message = message + user.name + ' received judgment from the almighty Arceus!';
+		break;
 		case 24: message = message + user.name + ' used Final Gambit and missed!';
-			break;
-		case 25: message = message + user.name + ' pissed off a Gyarados!';
-			break;
-		case 26: message = message + user.name + ' screamed "BSHAX IMO"!';
-			break;
-		case 27: message = message + user.name + ' was actually a 12 year and was banned for COPPA.';
-			break;
+		break;
+		case 25: message = message + user.name + ' went into grass without any pokemon!';
+		break;
+		case 26: message = message + user.name + ' made a Slowbro angry!';
+		break;
+		case 27: message = message + user.name + ' took a focus punch from Breloom!';
+		break;
 		case 28: message = message + user.name + ' got lost in the illusion of reality.';
-			break;
-		case 29: message = message + user.name + ' was unfortunate and didn\'t get a cool message.';
-			break;
-		case 30: message = message + 'The Immortal accidently kicked ' + user.name + ' from the server!';
-			break;
-		case 31: message = message + user.name + ' was was hit by Mesprit\'s geass and walked off a cliff!';
-			break;
-		case 32: message = message + user.name + ' died making love to an Excadrill!';
-			break;
-		case 33: message = message + user.name + ' was shoved in a Blendtec Blender with iPad!';
-			break;
-		case 34: message = message + user.name + ' reached Nirvana!';
-			break;
-		case 35: message = message + user.name + ' was bitten by a rabid Wolven!';
-			break;
-		case 36: message = message + user.name + ' was kicked from server! (lel clause)';
-			break;
-		case 37: message = message + user.name + ' was bitch slapped by the fabulous DamnRight';
-			break;
-		case 38: message = message + user.name + ' was Pan Hammered!';
-			break;
-		case 39: message = message + user.name + ' got Diggersby\'d!';
-			break;
-		case 40: message = message + user.name + ' had their name written in the death note!';
-			break;
-		case 41: message = message + user.name + ' was hit by a potato!';
-			break;
-		case 42: message = message + user.name + ' was molested by ninjawhitetiger! (ew)';
-			break;			
-		default: message = message + user.name + ' was hit by a comet!';
+		break;
+		case 29: message = message + user.name + ' ate a bomb!';
+		break;
+		case 30: message = message + 'BrittleWind accidentally spanked ' + user.name + ' too hard!';
+		break;
+		case 31: message = message + user.name + ' left for a timeout!';
+		break;
+		case 32: message = message + user.name + ' fell into a snake pit!'; //huehuehue how long until someone notices
+		break;
+		case 33: message = message + user.name + ' got eaten by sharks!';
+		break;
+		default: message = message + user.name + ' bought a poisoned Coke!';
 	};
 	message = message + ' ~~';
 	return message;

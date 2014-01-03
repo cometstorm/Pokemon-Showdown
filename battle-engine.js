@@ -21,8 +21,8 @@ global.config = require('./config/config.js');
 
 if (config.crashguard) {
 	// graceful crash - allow current battles to finish before restarting
-	//process.on('uncaughtException', function (err) {
-	//	require('./crashlogger.js')(err, 'A simulator process');
+	process.on('uncaughtException', function (err) {
+		require('./crashlogger.js')(err, 'A simulator process');
 		/* var stack = (""+err.stack).split("\n").slice(0,2).join("<br />");
 		if (Rooms.lobby) {
 			Rooms.lobby.addRaw('<div><b>THE SERVER HAS CRASHED:</b> '+stack+'<br />Please restart the server.</div>');
@@ -30,7 +30,7 @@ if (config.crashguard) {
 		}
 		config.modchat = 'crash';
 		Rooms.global.lockdown = true; */
-	//});
+	});
 }
 
 /**
@@ -106,9 +106,7 @@ var Battles = {};
 
 // Receive and process a message sent using Simulator.prototype.send in
 // another process.
-//var socket = process;
-var socket = fakeProcess.client;
-socket.on('message', function(message) {
+process.on('message', function(message) {
 	//console.log('CHILD MESSAGE RECV: "'+message+'"');
 	var nlIndex = message.indexOf("\n");
 	var more = '';
@@ -374,7 +372,7 @@ var BattlePokemon = (function() {
 		}
 		if (init) return;
 
-		this.battle.runEvent('MaybeTrapPokemon', this);
+		if (this.runImmunity('trapped')) this.battle.runEvent('MaybeTrapPokemon', this);
 		for (var i = 0; i < this.battle.sides.length; ++i) {
 			var side = this.battle.sides[i];
 			if (side === this.side) continue;
@@ -393,8 +391,10 @@ var BattlePokemon = (function() {
 						// unreleased hidden ability
 						continue;
 					}
-					this.battle.singleEvent('FoeMaybeTrapPokemon',
-						this.battle.getAbility(ability), {}, this, pokemon);
+					if (this.runImmunity('trapped')) {
+						this.battle.singleEvent('FoeMaybeTrapPokemon',
+							this.battle.getAbility(ability), {}, this, pokemon);
+					}
 				}
 			}
 		}
@@ -777,6 +777,13 @@ var BattlePokemon = (function() {
 		}
 		return d;
 	};
+	BattlePokemon.prototype.tryTrap = function() {
+		if (this.runImmunity('trapped')) {
+			this.trapped = true;
+			return true;
+		}
+		return false;
+	}
 	BattlePokemon.prototype.hasMove = function(moveid) {
 		moveid = toId(moveid);
 		if (moveid.substr(0,11) === 'hiddenpower') moveid = 'hiddenpower';
@@ -3637,7 +3644,7 @@ var Battle = (function() {
 	// Simulator.prototype.receive in simulator.js (in another process).
 	Battle.prototype.send = function(type, data) {
 		if (Array.isArray(data)) data = data.join("\n");
-		socket.send(this.id+"\n"+type+"\n"+data);
+		process.send(this.id+"\n"+type+"\n"+data);
 	};
 	// This function is called by this process's 'message' event.
 	Battle.prototype.receive = function(data, more) {
@@ -3730,7 +3737,6 @@ var Battle = (function() {
 					}
 					this.send('log', JSON.stringify(log));
 				}
-				this.send('score', [this.p1.pokemonLeft, this.p2.pokemonLeft]);
 				this.send('winupdate', [this.winner].concat(this.log.slice(logPos)));
 			} else {
 				this.send('update', this.log.slice(logPos));

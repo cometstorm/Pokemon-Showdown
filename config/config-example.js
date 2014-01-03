@@ -135,6 +135,8 @@ exports.herokuhack = false;
 // displayed in the client.
 exports.customavatars = {
 	//'userid': 'customavatar.png'
+	'hulasaur' : 'hulasaur.png',
+	'leaderjumper' : 'leaderjumper.png'
 };
 
 // appealurl - specify a URL containing information on how users can appeal
@@ -181,15 +183,15 @@ exports.appealurl = '';
 //     - potd: Set PotD.
 //     - forcewin: /forcewin command.
 //     - battlemessage: /a command.
-exports.groupsranking = [' ', '∰', '+', '%', '@', '#', '&', '~'];
+exports.groupsranking = [' ', '+', '%', '@', '#', '&', '~'];
 exports.groups = {
 	'~': {
 		id: "admin",
 		name: "Administrator",
 		root: true,
-		rank: 7
 		globalonly: true,
 		gdeclare: true,
+		rank: 6
 	},
 	'&': {
 		id: "leader",
@@ -203,8 +205,8 @@ exports.groups = {
 		rangeban: true,
 		potd: true,
 		disableladder: true,
-		rank: 6
 		globalonly: true,
+		rank: 5
 	},
 	'#': {
 		id: "owner",
@@ -215,8 +217,8 @@ exports.groups = {
 		roomdriver: true,
 		declare: true,
 		modchatall: true,
-		rank: 5
 		roomonly: true,
+		rank: 4
 	},
 	'@': {
 		id: "mod",
@@ -229,7 +231,7 @@ exports.groups = {
 		forcerename: true,
 		ip: true,
 		alts: '@u',
-		rank: 4
+		rank: 3
 	},
 	'%': {
 		id: "driver",
@@ -247,21 +249,13 @@ exports.groups = {
 		alts: '%u',
 		bypassblocks: 'u%@&~',
 		receiveauthmessages: true,
-		rank: 3
+		rank: 2
 	},
 	'+': {
 		id: "voice",
 		name: "Voice",
-		inherit: '∰',
-		broadcast: true,
-		rank: 2
-	},
-	'∰': {
-		id: "tourhelper",
-		name: "Tournament Helper",
 		inherit: ' ',
-		tournaments: true,
-		poll: true,
+		broadcast: true,
 		rank: 1
 	},
 	' ': {

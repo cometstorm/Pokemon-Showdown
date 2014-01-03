@@ -61,6 +61,7 @@ function runNpm(command) {
 
 try {
 	require('sugar');
+	require('http-get');
 } catch (e) {
 	return runNpm('install');
 }
@@ -305,10 +306,6 @@ try {
 					server = staticserver;
 				}
 				server.serve(request, response, function(e, res) {
-					fs.appendFile('logs/access.log',
-						request.socket.remoteAddress + ' - - [' + new Date().toLocaleString() + '] "' +
-						request.method + ' ' + request.url + ' HTTP/' + request.httpVersion + '" ' +
-						(e ? e.status : 200) + ' ? "' + (request.headers['referer'] || '-') + '" "' + (request.headers['user-agent'] || '-') + '"\n');
 					if (e && (e.status === 404)) {
 						staticserver.serveFile('404.html', 404, {}, request, response);
 					}
@@ -461,10 +458,8 @@ global.CommandParser = require('./command-parser.js');
 
 global.Simulator = require('./simulator.js');
 
-global.Tournaments = require('./tournaments/frontend.js');
-
 try {
-	global.Dnsbl = require('./dnsbl.js'); 
+	global.Dnsbl = require('./dnsbl.js');
 } catch (e) {
 	global.Dnsbl = {query:function(){}};
 }
@@ -483,11 +478,9 @@ if (config.crashguard) {
 			if (quietCrash) return;
 			var stack = (""+err.stack).split("\n").slice(0,2).join("<br />");
 			if (Rooms.lobby) {
-				Rooms.lobby.addRaw('<div class="broadcast-red"><b>THE SERVER HAS CRASHED:</b> '+stack+'<br />Please restart the server.</div>');
-				Rooms.lobby.addRaw('<div class="broadcast-red">You will not be able to talk in the lobby or start new battles until the server restarts.</div>');
+				Rooms.lobby.addRaw('<div class="broadcast-red"><b>THE SERVER HAS CRASHED:</b> '+stack+'</div>');
+				Rooms.lobby.addRaw('<div class="broadcast-green">The crash was automatically fixed and you can continue to battle and chat.</div>');
 			}
-			config.modchat = 'crash';
-			Rooms.global.lockdown = true;
 		};
 	})());
 }
@@ -682,5 +675,6 @@ fs.readFile('./config/ipbans.txt', function (err, data) {
 	}
 	Users.checkRangeBanned = Cidr.checker(rangebans);
 });
-
 global.tour = require('./tour.js').tour();
+global.hangman = require('./hangman.js').hangman();
+global.trivia = require('./trivia.js').trivia();
