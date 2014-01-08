@@ -381,6 +381,5 @@ exports.BattleTypeChart = {
       "Water": 2
     },
     "HPivs": {"atk":30,"def":30,"spa":30}
-  },
-  "Fairy": null
+  }
 };

@@ -354,7 +354,7 @@ var commands = exports.commands = {
 	
 	tierpoll: 'tiervote',
 	tiervote: function(target, room, user){
-		return this.parse('/poll Tournament Tier?,randombattle,ou,ubers,uu,pointscore,perseverance,ru,nu,lc,cap,cc1v1,oumonotype,1v1,gen6ou,negativemeta,ubersmonotype,challengecup');
+		return this.parse('/poll Tournament Tier?,randombattle,ou,ubers,uu,pointscore,perseverance,ru,nu,lc,cap,cc1v1,oumonotype,1v1,gen5ou,negativemeta,ubersmonotype,challengecup');
 	},
 	
 	gurl: function(target, room, user){
@@ -875,6 +875,11 @@ var commands = exports.commands = {
 		this.sendReplyBox('<div class="infobox"><center><img src="http://entertainmentrg.com/ArtistImages/rick-astley.jpg"><br><p>THE GAME</p><br>NEVER GONNA GIVE YOU UP</p><br><p>NEVER GONNA LET YOU DOWN</p><br><p>NEVER GONNA RUN AROUND</p><br><p>AND DESERT YOU</p>');
 	},
 	
+	objection: function(target, room, user) {
+        if (!this.canBroadcast()) return;
+        this.sendReplyBox('<center><img src="http://i.imgur.com/Cy0cjQN.png"><br><br>');
+    },
+	
 	ideclare: 'image',
 	image: function(target, room, user){
 			if(!target) return this.sendReply('/image needs a link.');
@@ -958,6 +963,10 @@ var commands = exports.commands = {
 		if (target === 'all' || target === 'negativemeta') {
 			matched = true;
 			buffer += '- <a href="http://www.smogon.com/forums/threads/the-negative-metagame.3483195/">Negative Meta</a><br />';
+		}
+		if (target === 'all' || target === 'averagemons') {
+			matched = true;
+			buffer += '- <a href="http://www.smogon.com/forums/threads/averagemons-other-metagame-of-the-month.3495527/">Averagemons</a><br />';
 		}
 		if (target === 'all' || target === 'seasonal') {
 			matched = true;
@@ -1252,15 +1261,17 @@ var commands = exports.commands = {
         if (!this.canBroadcast()) return;
         this.sendReplyBox('<center><img src="http://i.imgur.com/U9Weizi.gif"><br><br><img src="http://i.imgur.com/eNkWToZ.gif"><font color="red"><br><center>Ace: Jirachi<br>You\'ve been promoted to Nub by Cometstorm.');
     },
+	heisen: 'heisenß3rg',
 	heisenß3rg: function(target, room, user) {
         if (!this.canBroadcast()) return;
         this.sendReplyBox('<center><img src="http://i.imgur.com/UXhX606.png"><br><br><img src="http://i.picresize.com/images/2013/12/30/va5k.png"></font></color><br><center>Ace: Rayquaza<br>I am the one who knocks.');
     },
+	shizune: 'mikadoshiina',
 	misha: 'mikadoshiina',
 	mikado: 'mikadoshiina',
 	mikadoshiina: function(target, room, user) {
         if (!this.canBroadcast()) return;
-        this.sendReplyBox('<center><img src="http://i.imgur.com/43mz7m2.png"><br><br><img src="http://i.imgur.com/Fnnp8bb.png"></font></color><br><center>Ace: Volcarona<br>愛と平和!');
+        this.sendReplyBox('<center><img src="http://i.imgur.com/PyeSRXg.png"><br><br><img src="http://i.imgur.com/bjtVhhF.png"></font></color><br><center>Ace: Darkrai<br>雲散霧消');
     },
 	fergie: 'feraligilicious',
 	feral: 'feraligilicious',
@@ -1272,6 +1283,17 @@ var commands = exports.commands = {
     auraburst: function(target, room, user) {
         if (!this.canBroadcast()) return;
         this.sendReplyBox('<center><img src="http://i.imgur.com/vrXy1Hy.png"><br><img src="http://i.imgur.com/FP2uMdp.gif"><br><blink><font color="red">Ace: Heatran</blink><br>You may hate me, but don\'t worry, I hate you too.');
+    },
+	lk: 'lavakirby',
+	lavakirby: function(target, room, user) {
+        if (!this.canBroadcast()) return;
+        this.sendReplyBox('<center><img src="http://i.imgur.com/6DdTItE.gif"><br><br><img src="http://i.imgur.com/onp2yLX.png"></font></color><br><center>Ace: Croconaw<br>I\'m so fiery that when I go within 100 miles of anything that thing melts. Leave me alone.');
+    },
+	lynne: 'mesprit',
+	crystal: 'mesprit',
+	mesprit: function(target, room, user) {
+        if (!this.canBroadcast()) return;
+        this.sendReplyBox('<center><img src="http://i.imgur.com/hrV2qZR.png"><br><br><img src="http://www.polyvore.com/cgi/img-thing?.out=jpg&size=l&tid=41442248"></font></color><br><center>Ace: Hydreigon<br>You dare challenge me?');
     },
 
 	hangmanhelp: function(target, room, user) {

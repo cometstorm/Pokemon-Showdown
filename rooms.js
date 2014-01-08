@@ -14,6 +14,7 @@ const TIMEOUT_INACTIVE_DEALLOCATE = 40*60*1000;
 const REPORT_USER_STATS_INTERVAL = 1000*60*10;
 
 var modlog = modlog || fs.createWriteStream('logs/modlog.txt', {flags:'a+'});
+var complaint = complaint || fs.createWriteStream('logs/complaint.txt', {flags:'a+'}); 
 
 var GlobalRoom = (function() {
 	function GlobalRoom(roomid) {
@@ -333,8 +334,7 @@ var GlobalRoom = (function() {
 		} else {
 			for (var i in this.users) {
 				user = this.users[i];
-				if(!(!user.sendTo))
-					user.sendTo(this, message);
+				user.sendTo(this, message);
 			}
 		}
 	};
@@ -496,7 +496,6 @@ var GlobalRoom = (function() {
 		if (config.reportbattles && rooms.lobby) {
 			rooms.lobby.add('|b|'+newRoom.id+'|'+p1.getIdentity()+'|'+p2.getIdentity());
 		}
-		return newRoom;
 	};
 	GlobalRoom.prototype.addRoom = function(room, format, p1, p2, parent, rated) {
 		room = newRoom(room, format, p1, p2, parent, rated);
@@ -702,7 +701,6 @@ var BattleRoom = (function() {
 				logs[0].push(line);
 				logs[1].push(line);
 				logs[2].push(line);
-				if (line === "|callback|decision" && !this.active) this.active = true; // Hack
 			}
 		}
 		var roomid = this.id;
@@ -1206,8 +1204,12 @@ var ChatRoom = (function() {
 		this.logFile = null;
 		this.logFilename = '';
 		this.destroyingLog = false;
-		this.isLelEnforce = false;
-		this.isGTEnforce = false;
+		this.bannedUsers = {};
+		this.bannedIps = {};
+		this.lockedRoom = false;
+		this.messageCount = 0;
+		this.active = true;
+		this.inactiveCount = 0;
 
 		// `config.loglobby` is a legacy name
 		if (config.logchat || config.loglobby) {
@@ -1418,9 +1420,8 @@ var ChatRoom = (function() {
 	};
 	ChatRoom.prototype.onJoinConnection = function(user, connection) {
 		var userList = this.userList ? this.userList : this.getUserList();
-		this.send('|init|chat\n|title|'+this.title+'\n'+userList+'\n'+this.log.slice(-25).join('\n'), connection);
-		if (global.Tournaments && Tournaments.getTournament(this.id))
-			Tournaments.getTournament(this.id).update(user);
+		var modchat = this.getModchatNote();
+		this.send('|init|chat\n|title|'+this.title+'\n'+userList+'\n'+this.logGetLast(25).join('\n')+modchat, connection);
 	};
 	ChatRoom.prototype.onJoin = function(user, connection, merging) {
 		if (!user) return false; // ???
@@ -1442,9 +1443,8 @@ var ChatRoom = (function() {
 
 		if (!merging) {
 			var userList = this.userList ? this.userList : this.getUserList();
-			this.send('|init|chat\n|title|'+this.title+'\n'+userList+'\n'+this.log.slice(-100).join('\n'), connection);
-			if (global.Tournaments && Tournaments.getTournament(this.id))
-				Tournaments.getTournament(this.id).update(user);
+			var modchat = this.getModchatNote();
+			this.send('|init|chat\n|title|'+this.title+'\n'+userList+'\n'+this.logGetLast(100).join('\n')+modchat, connection);
 		}
 
 		return user;
@@ -1509,6 +1509,7 @@ var ChatRoom = (function() {
 
 		if (message) {
 			this.add('|c|'+user.getIdentity(this.id)+'|'+message, true);
+			this.messageCount++;
 		}
 		this.update();
 	};

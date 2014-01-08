@@ -2254,6 +2254,7 @@ var commands = exports.commands = {
 		this.logModCommand(user.name+' send a popup message to '+targetUser.name);
 	},
 
+	declarepurple: 'declare',
 	declaredark: 'declare',
 	declaregreen: 'declare',
 	declarered: 'declare',
@@ -2274,6 +2275,9 @@ var commands = exports.commands = {
 		}
 		else if (cmd === 'declaredark') {
 			this.add('|raw|<div class="broadcast-black"><b>'+target+'</b></div>');
+		}
+		else if (cmd === 'declarepurple') {
+			this.add('|raw|<div class="broadcast-purple"><b>'+target+'</b></div>');
 		}
 		if (!room.auth) {
 			this.logModCommand(user.name+' declared '+target);
