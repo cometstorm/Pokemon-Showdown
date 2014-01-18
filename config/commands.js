@@ -871,6 +871,9 @@ var commands = exports.commands = {
 	},
 	
 	rickrolled: function(target, room, user) {
+		if(room.id === 'lobby') {
+		return this.sendReply('|html|Please use this in another room; it\'s too spammy for Lobby.');
+		}
 		if (!this.canBroadcast()) return;
 		this.sendReplyBox('<div class="infobox"><center><img src="http://entertainmentrg.com/ArtistImages/rick-astley.jpg"><br><p>THE GAME</p><br>NEVER GONNA GIVE YOU UP</p><br><p>NEVER GONNA LET YOU DOWN</p><br><p>NEVER GONNA RUN AROUND</p><br><p>AND DESERT YOU</p>');
 	},
@@ -1033,6 +1036,11 @@ var commands = exports.commands = {
 		this.sendReplyBox('Please follow the rules:<br />' +
 			'- <a href="http://storm-server.weebly.com/rules.html">Rules</a><br />' +
 			'</div>');
+	},
+	
+	forums: function(target, room, user) {
+		if (!this.canBroadcast()) return;
+		return this.sendReplyBox('Storm\'s forums can be found <a href="http://storm-server-forums.boards.net">here</a>.');
 	},
 
 	faq: function(target, room, user) {
@@ -1264,7 +1272,7 @@ var commands = exports.commands = {
 	heisen: 'heisenß3rg',
 	heisenß3rg: function(target, room, user) {
         if (!this.canBroadcast()) return;
-        this.sendReplyBox('<center><img src="http://i.imgur.com/UXhX606.png"><br><br><img src="http://i.picresize.com/images/2013/12/30/va5k.png"></font></color><br><center>Ace: Rayquaza<br>I am the one who knocks.');
+        this.sendReplyBox('<center><img src="http://i.imgur.com/UXhX606.png"><br><br><img src="http://s24.postimg.org/ut3z9j18l/rsz_twd_s5_key_art_796.png"></font></color><br><center>Ace: Rayquaza<br>Who are you talking to right now? Who is it you think you see?');
     },
 	shizune: 'mikadoshiina',
 	misha: 'mikadoshiina',

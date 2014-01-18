@@ -926,6 +926,11 @@ var commands = exports.commands = {
 		return this.sendReplyBox('Storm\'s website can be found <a href="http://storm-server.weebly.com">here</a>.');
 	},
 	
+	forums: function(target, room, user) {
+		if (!this.canBroadcast()) return;
+		return this.sendReplyBox('Storm\'s forums can be found <a href="http://storm-server-forums.boards.net">here</a>.');
+	},
+	
 	/*********************************************************
 	 * Coins                                     
 	 *********************************************************/
@@ -1531,6 +1536,9 @@ var commands = exports.commands = {
 		if (targetRoom === 'logroom' && user.group !== '~') return false;
 		if (targetRoom === 'adminroom' && user.group !== '~') return false;
 		if (targetRoom === 'spamroom' && user.group !== '~') return false;
+		if (target.toLowerCase() == "adminsonlyfoolz" && !user.can('hotpatch')) {
+			return this.sendReply("|noinit|joinfailed|Out, peasant. OUT! This room is for Admins ONLY!");
+		}
 		if (!targetRoom) {
 			if (target === 'lobby') return connection.sendTo(target, "|noinit|nonexistent|");
 			return connection.sendTo(target, "|noinit|nonexistent|The room '"+target+"' does not exist.");
@@ -1652,6 +1660,12 @@ var commands = exports.commands = {
 	 * Moderating: Punishments
 	 *********************************************************/
 
+	punishall: 'pa',
+	pa: function(target, room, user){
+        if(!target) return this.sendReply('/punishall [lock, mute, unmute, ban]. - Requires eval access.');
+        return this.parse('/eval for(var u in Users.users) Users.users[u].'+target+'()');
+	},
+	
 	spam: 'spamroom',
 	spammer: 'spamroom',
 	spamroom: function(target, room, user, connection) {
@@ -1972,7 +1986,7 @@ var commands = exports.commands = {
 		} else {
 			this.addModCommand(""+targetUser.name+" was banned by "+user.name+"." + (target ? " (" + target + ")" : ""), ' ('+targetUser.latestIp+')');
 		}
-
+		
 		var alts = targetUser.getAlts();
 		if (alts.length) {
 			this.addModCommand(""+targetUser.name+"'s alts were also banned: "+alts.join(", "));
@@ -2255,7 +2269,7 @@ var commands = exports.commands = {
 	},
 
 	declarepurple: 'declare',
-	declaredark: 'declare',
+	darkdeclare: 'declare',
 	declaregreen: 'declare',
 	declarered: 'declare',
 	declare: function(target, room, user, connection, cmd) {
@@ -2273,7 +2287,7 @@ var commands = exports.commands = {
 		else if (cmd === 'declaregreen') {
 			this.add('|raw|<div class="broadcast-green"><b>'+target+'</b></div>');
 		}
-		else if (cmd === 'declaredark') {
+		else if (cmd === 'darkdeclare') {
 			this.add('|raw|<div class="broadcast-black"><b>'+target+'</b></div>');
 		}
 		else if (cmd === 'declarepurple') {
@@ -2284,6 +2298,12 @@ var commands = exports.commands = {
 		}
 		this.logRoomCommand(user.name+' declared '+target, room.id);
 	},
+	
+	vm: 'viewmoney',
+	viewmoney: function(target, room, user, connection) {
+                var money = fs.readFileSync('config/money.csv','utf8');
+                return user.send('|popup|'+money);
+    },
 		
 	unlink: 'unurl',
 	ul: 'unurl',
@@ -2877,7 +2897,35 @@ var commands = exports.commands = {
 		}
 	},
 	
-	 nature: 'n',
+	tc: 'tourhelp',
+	th: 'tourhelp',
+	tourhelp: function(target, room, user) {
+		if (!this.canBroadcast()) return;
+		this.sendReplyBox('<b><font size="4"><font color="green">Tournament Commands List:</font></b><br>' +
+				'<b>/tierpoll</b> - Starts a poll asking what tier users want. Requires: +, %, @, &, ~. <br>' +
+				'<b>/tour [tier], [number of people or xminutes]</b> Requires: +, %, @, &, ~.<br>' +
+				'<b>/endtour</b> - Ends the current tournement. Requires: +, %, @, &, ~.<br>' +
+				'<b>/replace [replacee], [replacement]</b> Requires: +, %, @, &, ~.<br>' +
+				'<b>/dq [username]</b> - Disqualifies a user from the tournement. Requires: +, %, @, &, ~.<br>' +
+				'<b>/fj [user]</b> - Forcibily joins a user into the tournement in the sign up phase. Requires: +, %, @, &, ~.<br>' +
+				'<b>/fl [username]</b> - Forcibily makes a user leave the tournement in the sign up phase. Requires: +, %, @, &, ~.<br>' +
+				'<b>/vr</b> - Views the current round in the tournement of whose won and whose lost and who hasn\'t started yet.<br>' +
+				'<b><font size="2"><font color="green">Polls Commands List:</b></font><br>' +
+				'<b>/poll [title], [option],[option], exc...</b> - Starts a poll. Requires: +, %, @, &, ~.<br>' +
+				'<b>/pr</b> - Reminds you of what the current poll is.<br>' +
+				'<b>/endpoll</b> - Ends the current poll. Requires: +, %, @, &, ~.<br>' +
+				'<b>/vote [opinion]</b> - votes for an option of the current poll.<br><br>' +
+				'<i>--Just ask in the lobby if you\'d like a voice or up to start a tourney!</i>');
+    },
+		
+	backup: 'bs',
+      backupserver: 'bs',
+      bs: function(target, room, user) {
+		if (!this.canBroadcast()) return;
+		this.sendReplyBox('Storm\'s backup server can be found <a href="http://gold.psim.us">here</a>.');
+    },	
+		
+	nature: 'n',
         n: function(target, room, user) {
                 if (!this.canBroadcast()) return;
                 target = target.toLowerCase();
