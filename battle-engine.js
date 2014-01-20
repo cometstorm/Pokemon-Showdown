@@ -228,7 +228,6 @@ var BattlePokemon = (function() {
 		this.baseAbility = toId(set.ability);
 		this.ability = this.baseAbility;
 		this.item = toId(set.item);
-		this.canMegaEvo = (this.battle.getItem(this.item).megaEvolves === this.species);
 		this.abilityData = {id: this.ability};
 		this.itemData = {id: this.item};
 		this.speciesData = {id: this.speciesid};
@@ -308,15 +307,6 @@ var BattlePokemon = (function() {
 			accuracy: 0, evasion: 0
 		};
 		this.stats = {atk:0, def:0, spa:0, spd:0, spe:0};
-		this.baseStats = {atk:10, def:10, spa:10, spd:10, spe:10};
-		for (var statName in this.baseStats) {
-			var stat = this.template.baseStats[statName];
-			stat = Math.floor(Math.floor(2*stat+this.set.ivs[statName]+Math.floor(this.set.evs[statName]/4))*this.level / 100 + 5);
-			var nature = this.battle.getNature(this.set.nature);
-			if (statName === nature.plus) stat *= 1.1;
-			if (statName === nature.minus) stat *= 0.9;
-			this.baseStats[statName] = Math.floor(stat);
-		};
 
 		this.maxhp = Math.floor(Math.floor(2*this.template.baseStats['hp']+this.set.ivs['hp']+Math.floor(this.set.evs['hp']/4)+100)*this.level / 100 + 10);
 		if (this.template.baseStats['hp'] === 1) this.maxhp = 1; // shedinja
@@ -548,7 +538,7 @@ var BattlePokemon = (function() {
 			var moveName = move.move;
 			if (move.id === 'hiddenpower') {
 				moveName = 'Hidden Power '+this.hpType;
-				if (this.gen < 6) moveName += ' '+this.hpPower;
+				if (this.hpPower != 70) moveName += ' '+this.hpPower;
 			}
 			moves.push({
 				move: moveName,
@@ -754,9 +744,8 @@ var BattlePokemon = (function() {
 				if (this.hasType(type[i])) return true;
 			}
 		} else {
-			for (var i=0; i<this.types.length; i++) {
-				if (this.types[i] === type) return true;
-			}
+			if (this.types[0] === type) return true;
+			if (this.types[1] === type) return true;
 		}
 		return false;
 	};
@@ -1115,15 +1104,12 @@ var BattlePokemon = (function() {
 			return true;
 		}
 		if (this.negateImmunity[type]) return true;
-		if (!(this.negateImmunity['Type'] && type in this.battle.data.TypeChart)) {
-			// Ring Target not active
-			if (!this.battle.getImmunity(type, this)) {
-				this.battle.debug('natural immunity');
-				if (message) {
-					this.battle.add('-immune', this, '[msg]');
-				}
-				return false;
+		if (!this.negateImmunity['Type'] && !this.battle.getImmunity(type, this)) {
+			this.battle.debug('natural immunity');
+			if (message) {
+				this.battle.add('-immune', this, '[msg]');
 			}
+			return false;
 		}
 		var immunity = this.battle.runEvent('Immunity', this, null, null, type);
 		if (!immunity) {
@@ -1195,13 +1181,6 @@ var BattleSide = (function() {
 				details: pokemon.details,
 				condition: pokemon.getHealth(pokemon.side),
 				active: (pokemon.position < pokemon.side.active.length),
-				stats: {
-					atk: pokemon.baseStats['atk'],
-					def: pokemon.baseStats['def'],
-					spa: pokemon.baseStats['spa'],
-					spd: pokemon.baseStats['spd'],
-					spe: pokemon.baseStats['spe']
-				},
 				moves: pokemon.moves.map(function(move) {
 					if (move === 'hiddenpower') {
 						return move + toId(pokemon.hpType) + (pokemon.hpPower == 70?'':pokemon.hpPower);
@@ -1209,8 +1188,7 @@ var BattleSide = (function() {
 					return move;
 				}),
 				baseAbility: pokemon.baseAbility,
-				item: pokemon.item,
-				canMegaEvo: pokemon.canMegaEvo
+				item: pokemon.item
 			});
 		}
 		return data;
@@ -1926,6 +1904,7 @@ var Battle = (function() {
 		for (var i=0; i<statuses.length; i++) {
 			var status = statuses[i].status;
 			var thing = statuses[i].thing;
+			if (thing.fainted) continue;
 			//this.debug('match '+eventid+': '+status.id+' '+status.effectType);
 			if (status.effectType === 'Status' && thing.status !== status.id) {
 				// it's changed; call it off
@@ -2090,6 +2069,7 @@ var Battle = (function() {
 			return statuses;
 		}
 
+		if (thing.fainted) return statuses;
 		if (!thing.getStatus) {
 			this.debug(JSON.stringify(thing));
 			return statuses;
@@ -2139,17 +2119,14 @@ var Battle = (function() {
 			if (foeCallbackType.substr(0,5) === 'onFoe') {
 				eventName = foeCallbackType.substr(5);
 				for (var i=0; i<allyActive.length; i++) {
-					if (!allyActive[i] || allyActive[i].fainted) continue;
 					statuses = statuses.concat(this.getRelevantEffectsInner(allyActive[i], 'onAlly'+eventName,null,null,false,false, getAll));
 					statuses = statuses.concat(this.getRelevantEffectsInner(allyActive[i], 'onAny'+eventName,null,null,false,false, getAll));
 				}
 				for (var i=0; i<foeActive.length; i++) {
-					if (!foeActive[i] || foeActive[i].fainted) continue;
 					statuses = statuses.concat(this.getRelevantEffectsInner(foeActive[i], 'onAny'+eventName,null,null,false,false, getAll));
 				}
 			}
 			for (var i=0; i<foeActive.length; i++) {
-				if (!foeActive[i] || foeActive[i].fainted) continue;
 				statuses = statuses.concat(this.getRelevantEffectsInner(foeActive[i], foeCallbackType,null,null,false,false, getAll));
 			}
 		}
@@ -2457,7 +2434,6 @@ var Battle = (function() {
 		this.p1.foe = this.p2;
 
 		this.add('gametype', this.gameType);
-		this.add('gen', this.gen);
 
 		var format = this.getFormat();
 		Tools.mod(format.mod).getBanlistTable(format); // fill in format ruleset
@@ -2745,13 +2721,8 @@ var Battle = (function() {
 		}
 		basePower = clampIntRange(basePower, 1);
 
-		if (this.gen <= 5) {
-			move.critRatio = clampIntRange(move.critRatio, 0, 5);
-			var critMult = [0, 16, 8, 4, 3, 2];
-		} else {
-			move.critRatio = clampIntRange(move.critRatio, 0, 4);
-			var critMult = [0, 16, 8, 2, 1];
-		}
+		move.critRatio = clampIntRange(move.critRatio, 0, 5);
+		var critMult = [0, 16, 8, 4, 3, 2];
 
 		move.crit = move.willCrit || false;
 		if (move.willCrit === undefined) {
@@ -2841,7 +2812,7 @@ var Battle = (function() {
 		baseDamage = Math.floor(baseDamage * (100 - this.random(16)) / 100);
 
 		// STAB
-		if (move.hasSTAB || type !== '???' && pokemon.hasType(type)) {
+		if (type !== '???' && pokemon.hasType(type)) {
 			// The "???" type never gets STAB
 			// Not even if you Roost in Gen 4 and somehow manage to use
 			// Struggle in the same turn.
@@ -2849,20 +2820,19 @@ var Battle = (function() {
 			baseDamage = this.modify(baseDamage, move.stab || 1.5);
 		}
 		// types
-		var totalTypeMod = this.getEffectiveness(move, target, pokemon);
-
-		totalTypeMod = clampIntRange(totalTypeMod, -3, 3);
+		var totalTypeMod = this.getEffectiveness(type, target);
+		totalTypeMod = this.singleEvent('ModifyEffectiveness', move, null, target, pokemon, move, totalTypeMod);
 		if (totalTypeMod > 0) {
 			if (!suppressMessages) this.add('-supereffective', target);
-
-			for (var i=0; i<totalTypeMod; i++) {
+			baseDamage *= 2;
+			if (totalTypeMod >= 2) {
 				baseDamage *= 2;
 			}
 		}
 		if (totalTypeMod < 0) {
 			if (!suppressMessages) this.add('-resisted', target);
-
-			for (var i=0; i>totalTypeMod; i--) {
+			baseDamage = Math.floor(baseDamage/2);
+			if (totalTypeMod <= -2) {
 				baseDamage = Math.floor(baseDamage/2);
 			}
 		}

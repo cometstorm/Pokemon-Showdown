@@ -1563,8 +1563,8 @@ var commands = exports.commands = {
 			'For any questions you might have, feel free to PM a staff member, a Driver (%), Moderator (@), or Leader (&). <br>' +
 			'Only serious questions/ concerns should be taken up with an Administrator (~). <br />' +
 			'Have fun and good luck! <br />' +
-			'-- Check out our website <a href="http://storm-server.weebly.com/">here</a>!');
-		}
+			'-- Check out our website <a href="http://storm-server.weebly.com/">here</a>! We also have our own <a href="http://storm-server-forums.boards.net/">forums</a>!');
+			}
 	},
 
 	rb: 'roomban',

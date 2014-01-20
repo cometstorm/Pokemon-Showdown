@@ -376,7 +376,7 @@ function canTalk(user, room, connection, message) {
 		// remove zalgo
 		message = message.replace(/[\u0300-\u036f\u0E31\u0E34-\u0E3A\u0E47-\u0E4E]{3,}/g,'');
 
-		if (room && room.id === 'lobby') {
+		if (room && room.id === 'room') {
 			var normalized = message.trim();
 			if ((normalized === user.lastMessage) &&
 					((Date.now() - user.lastMessageTime) < MESSAGE_COOLDOWN)) {
