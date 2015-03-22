@@ -1,0 +1,184 @@
+/* Header */
+#header {
+    background: url(http://i.imgur.com/XkjakIM.png);
+}
+
+/*main background layout */
+body {
+    background: url("http://i.imgur.com/tRGod94.jpg?2")!important; 
+}
+
+/* Tabbar rooms */
+.tabbar a.button.cur, .tabbar a.button.cur:hover {
+    color: #fff;
+    background: #403e3c;
+    border: solid 1px #000;
+}
+
+.tabbar a.button {
+    border: solid 1px #000;
+}
+
+.maintabbarbottom {
+    background: #403e3c;
+    border: solid 1px #000000;
+}
+
+/* Close and minimize button */
+.closebutton, .minimizebutton {
+    color: #7AA3CC
+;
+}
+
+.closebutton:hover, .minimizebutton:hover {
+    color: rgb(216, 205, 205);
+}
+
+/* Icon user */
+.icon-user {
+    color: #7AA3CC !important;
+}
+
+/* Menu */
+.menugroup {
+    border: 1px dotted #000;
+}
+
+.menugroup button.big {
+    font-size: 10pt;
+}
+
+.menugroup .button {
+    background: url("http://i.imgur.com/vdZCQUT.png?3");
+    border: solid 1px #000;
+    color: #fff;
+    border-color: hsl(0, 0%, 0%);
+    font-size: 8pt;
+}
+
+.menugroup .button:hover {
+	background: url("http://i.imgur.com/mb7edrt.png?1");
+}
+
+/* Footer links */
+.mainmenufooter {
+    color: #fff;
+}
+
+.mainmenufooter a {
+    text-decoration: none;
+    color: #6b6767;
+}
+
+.mainmenufooter a:hover {
+    text-decoration: none;
+    color: #fff;
+}
+
+/* Userlist */
+.userlist {
+    border-right: 1px solid #000;
+    border-left: 1px solid #000;
+    background: rgba(230, 230, 230, 0.8);
+}
+
+.userlist li {
+    border-bottom: 1px solid #A3A3A3;
+}
+
+.userlist li button:hover {
+    background: #fafafa;
+}
+
+.ps-room {
+    border: 0;
+}
+
+.userlist li em.group {
+    color: #000;
+}
+
+/* Chat-log */  
+.chat-log {
+        background: url("http://i.imgur.com/bcFwA9d.png?2") right top no-repeat;
+        #font-size:10pt;
+        #overflow:auto
+}
+
+.chat-log-add {
+    border-top: 1px solid #000;
+    background: #E6E6E6;
+}
+
+/* Announce */
+.message-announce {
+    background: #7AA3CC
+;
+    font-style: italic;
+}
+
+/* Declare Color */
+.broadcast-blue {
+    background: #7AA3CC;
+    color: #000;
+    border: 2px solid #000;
+    padding: 5px;
+    font-family: Futura, "Trebuchet MS", Arial, sans-serif;
+    font-size: 10pt;
+}
+
+.broadcast-red {
+    background: #ec5c4d;
+    color: #000;
+    border: 2px solid #000;
+    padding: 5px;
+    font-family: Futura, "Trebuchet MS", Arial, sans-serif;
+    font-size: 10pt;
+}
+
+.broadcast-green {
+    background: #559955;
+    color: #000;
+    border: 2px solid #000;
+    padding: 5px;
+    font-family: Futura, "Trebuchet MS", Arial, sans-serif;
+    font-size: 10pt;
+}
+
+/* PM Messages */
+.pm-window h3 {
+	background: rgba(4, 0, 0, 0.7);
+    color: #fff;
+    border: 1px solid #404040;
+}
+
+.pm-window h3:hover {
+    color: #ec9900;
+}
+
+.pm-log-add {
+    border: 1px solid #404040;
+	background: rgba(4, 0, 0, 0.7);
+}
+
+.pm-window.focused h3, .pm-window.focused h3:hover {
+    color: #7AA3CC;
+    background: #404040;
+    border: 1px solid #000;
+}
+
+/* Popup */
+.ps-popup {
+    border: 2px solid #000000;
+    background: url("http://i.imgur.com/tRGod94.jpg?2");
+}
+
+.ps-popup a {
+    color: rgb(255, 255, 255);
+    text-decoration: none;
+}
+
+.ps-popup a:hover {
+    color: rgb(62, 88, 250);
+    text-decoration: none;
+}
