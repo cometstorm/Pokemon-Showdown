@@ -1000,6 +1000,13 @@ var commands = exports.commands = {
 			"- <a href=\"http://gamut-was-taken.github.io/gen6-damage-calc/\">Damage Calculator</a>"
 		);
 	},
+	webzine: function (target, room, user) {
+		if (!this.canBroadcast()) return;
+		this.sendReplyBox(
+			"Oasis server News and Webzine.<br />" +
+			"https://docs.google.com/document/d/17cxnJCdvS_p4JZzq_wWg4IE8azCs-TSSXOwRHqbYBYw</a>"
+		);
+	},
 
 	capintro: 'cap',
 	cap: function (target, room, user) {
