@@ -1352,7 +1352,7 @@ var commands = exports.commands = {
 			buffer += "- <a href=\"https://www.smogon.com/forums/threads/3505710/\">LC Metagame Discussion</a><br />";
 			buffer += "- <a href=\"https://www.smogon.com/forums/threads/3490462/\">LC Banlist</a><br />";
 			buffer += "- <a href=\"https://www.smogon.com/forums/threads/3496013/\">LC Viability Rankings</a><br />";
-			buffer += "- <a href=\"www.smogon.com/forums/threads/lc-oras-sample-teams.3524438/\">LC Sample Teams</a><br />";http://
+			buffer += "- <a href=\"https://www.smogon.com/forums/threads/lc-oras-sample-teams.3524438/\">LC Sample Teams</a><br />";http://
 		}
 		if (target === 'all' || target === 'smogondoubles' || target === 'doubles') {
 			matched = true;
