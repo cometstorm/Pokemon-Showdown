@@ -212,7 +212,7 @@ user.updateIdentity();
         buffer.drivers = buffer.drivers.join(', ');
         buffer.voices = buffer.voices.join(', ');
 
-        this.popupReply('__**SparkServer Staff**__\n\nAdministrators (~):\n' + buffer.admins + '\n\nLeaders (&):\n' + buffer.leaders + '\n\nModerators (@):\n' + buffer.mods + '\n\nDrivers (%):\n' + buffer.drivers + '\n\nVoices (+):\n' + buffer.voices + '\n\nTotal Staff Members: ' + numStaff);
+        this.popupReply('__**Oasis Staff**__\n\nAdministrators (~):\n' + buffer.admins + '\n\nLeaders (&):\n' + buffer.leaders + '\n\nModerators (@):\n' + buffer.mods + '\n\nDrivers (%):\n' + buffer.drivers + '\n\nVoices (+):\n' + buffer.voices + '\n\nTotal Staff Members: ' + numStaff);
     },
 
     regdate: function (target, room, user, connection) {
@@ -712,6 +712,36 @@ user.updateIdentity();
 
         this.sendReply(targetUser.name + ' has losted ' + takeMoney + ' ' + b + '. This user now has ' + total + ' bucks.');
         targetUser.send(user.name + ' has taken ' + takeMoney + ' ' + b + ' from you. You now have ' + total + ' bucks.');
+    },
+
+    givebadges:'givebadge',
+    givebadge: function (target, room, user) {
+        if (!user.can('mute')) return;
+        if (!target) return this.sendReply('You did not specify a user.');
+
+        if (target.indexOf(',') >= 0) {
+            var parts = target.split(',');
+            parts[0] = this.splitTarget(parts[0]);
+            var targetUser = this.targetUser;
+            var thisRoom = room.id;
+        }
+
+        if (!targetUser) return this.sendReply('User ' + this.targetUsername + ' not found.');
+        if (isNaN(parts[1])) return this.sendReply('Very funny, now use a real number.');
+        if (parts[1] < 1) return this.sendReply('You can\'t give less than one badge at a time.');
+        if (String(parts[1]).indexOf('.') >= 0) return this.sendReply('You cannot give parts of badges.');
+
+        var b = 'badges';
+        var cleanedUp = parts[1].trim();
+        var giveMoney = Number(cleanedUp);
+        if (giveMoney === 1) b = 'badge';
+
+        var money = Core.lstdin(thisRoom, targetUser.userid);
+        var total = Number(money) + Number(giveMoney);
+
+        Core.lstdout(thisRoom, targetUser.userid, total);
+
+        this.add('|raw|<b>'+targetUser.name + ' was given ' + giveMoney + ' ' + b + '. This user now has ' + total + ' badges.</b>');
     },
 
     show: function (target, room, user) {
