@@ -997,7 +997,7 @@ var commands = exports.commands = {
 		if (!this.canBroadcast()) return;
 		this.sendReplyBox(
 			"Pokemon Showdown! damage calculator. (Courtesy of Honko)<br />" +
-			"- <a href=\"https://pokemonshowdown.com/damagecalc/\">Damage Calculator</a>"
+			"- <a href=\"http://gamut-was-taken.github.io/gen6-damage-calc/\">Damage Calculator</a>"
 		);
 	},
 
