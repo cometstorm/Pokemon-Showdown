@@ -2,7 +2,9 @@
 #header {
     background: url(http://i.imgur.com/XkjakIM.png);
 }
-
+.header .logo {
+  		display:none; 
+}
 /*main background layout */
 body {
     background: url("http://i.imgur.com/tRGod94.jpg?2")!important; 
