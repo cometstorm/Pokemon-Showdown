@@ -1,33 +1,40 @@
-/* Header */
+@namespace url(http://www.w3.org/1999/xhtml);
+ 
+@-moz-document domain("play.pokemonshowdown.com") {
+ 
+  /* Header */
 #header {
   background: url("http://i.imgur.com/ESyNoL9.gif?2") no-repeat;
   background-color: rgba(0, 0, 0, 0.3);
 }
 .header .logo {
-  		display:none; 
+                display:none;
 }
 /*main background layout */
 body {
-    background: url("http://i.imgur.com/tRGod94.jpg?2")!important; 
+    background: url("http://i.imgur.com/tRGod94.jpg?2")!important;
 }
  .mainmenuwrapper{
-         border: 1px dotted #000;
+         
 }
-
+ 
 /* Tabbar rooms */
 .tabbar a.button.cur, .tabbar a.button.cur:hover {
     color: #fff;
-    background: #403e3c;
-    border: dotted 1px #000;
+    background: url("http://i.imgur.com/vdZCQUT.png?3");
+   
 }
+   
  
 .tabbar a.button {
-    border: dotted 1px #000;
+ 
+   
 }
  
 .maintabbarbottom {
     background: #403e3c;
-    border: dotted 1px #000000;
+    opacity: 0.4;
+   
 }
  
 /* Close and minimize button */
@@ -43,16 +50,16 @@ body {
 .icon-user {
     color: #7AA3CC !important;
 }
-
+ 
 /* Menu */
 .menugroup {
-    border: 1px dotted #000;
+   
 }
-
+ 
 .menugroup button.big {
     font-size: 10pt;
 }
-
+ 
 .menugroup .button {
     background: url("http://i.imgur.com/vdZCQUT.png?3");
     border: solid 1px #000;
@@ -60,10 +67,10 @@ body {
     border-color: hsl(0, 0%, 0%);
     font-size: 8pt;
 }
-
+ 
 .menugroup .button:hover {
-	background: url("http://i.imgur.com/mb7edrt.png?1");
-} 
+        background: url("http://i.imgur.com/mb7edrt.png?1");
+}
  
 /* Footer links */
 .mainmenufooter {
@@ -82,7 +89,7 @@ body {
  
 /* Userlist */
 .userlist {
-    border-right: 1px solid #000;
+   
     background: rgba(230, 230, 230, 0.8);
 }
  
@@ -110,8 +117,7 @@ body {
 }
  
 .chat-log-add {
-    border-top: 1px solid #000;
-    border-left: 1px solid #000;
+   
     background: #E6E6E6;
 }
  
@@ -176,21 +182,26 @@ body {
     border: 2px solid #000000;
     background: rgba(225, 192, 122, 1);
 }
-
+ 
 .ps-popup a {
     color: #212121;
     text-decoration: none;
 }
-
+ 
 .ps-popup a:hover {
     color: #fff;
     text-decoration: none;
 }
  
-/* Battle Background */
+/* Battle Background (& Battle window layout)*/
 .backdrop {
     background: url("http://i.imgur.com/MhWoAbr.jpg?3") !important;
 }
+ 
+.battle-log .chat em{
+    font-size:10pt;
+   
+  }
  
  
 /* Roomlist */
@@ -207,3 +218,4 @@ body {
     color: #fff;
 }
  
+}
