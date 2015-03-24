@@ -256,6 +256,35 @@ user.updateIdentity();
         req.end();
     },
 
+    viewbadges:'badges',
+    badgecase:'badges',
+    badges: function (target, room, user) {
+	if(!this.canBroadcast()) return;
+	if (target.length >= 19) return this.sendReply('No username is that long.');
+	if (!room.chatRoomData) return this.sendReply('You can only do this in league rooms.');
+	if (room.id === 'lobby') return false;
+
+	var targetUser = this.targetUserOrSelf(target);
+	var fileName = room.id;
+
+	if (!targetUser) {
+	    var userId = toId(target);
+	    var badges = Core.lstdin(fileName,userId);
+	    var b = 'badges';
+	    if (badges === 1) {
+		var b = 'badge';
+	    }
+	    return this.sendReplyBox('You have ' + badges + ' ' + b + ' in this room.');
+	}
+	var userId = targetUser.userid;
+	var badges = Core.stdin(fileName,userId);
+	var b = 'badges';
+	if (b === 1) {
+	    var b = 'badge';
+	}
+	return this.sendReplyBox(targetUser + ' has ' + badges + ' ' + b + ' in this league.');
+    },
+	
     atm: 'profile',
     profile: function (target, room, user, connection, cmd) {
         if (!this.canBroadcast()) return;
