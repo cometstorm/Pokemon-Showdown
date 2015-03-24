@@ -236,7 +236,7 @@ var commands = exports.commands = {
 		if (targetUser.isSysop) {
 			this.sendReply("(Pok\xE9mon Showdown System Operator)");
 		}
-		if (!targetUser.authenticated) {
+		if (!targetUser.registered) {
 			this.sendReply("(Unregistered)");
 		}
 		if ((cmd === 'ip' || cmd === 'whoare') && (user.can('ip', targetUser) || user === targetUser)) {
@@ -1588,7 +1588,9 @@ var commands = exports.commands = {
 		if (!target) return this.parse('/help htmlbox');
 		if (!this.can('declare', null, room)) return;
 		if (!this.canHTML(target)) return;
-		if (!this.canBroadcast('!htmlbox')) return;
+
+		if (room.id !== 'development' && !this.canBroadcast('!htmlbox')) return;
+		this.broadcasting = true;
 
 		this.sendReplyBox(target);
 	},

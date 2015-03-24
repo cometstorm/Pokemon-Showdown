@@ -89,6 +89,10 @@ var Room = (function () {
 		this.update();
 	};
 
+	Room.prototype.toString = function () {
+		return this.id;
+	};
+
 	// roomban handling
 	Room.prototype.isRoomBanned = function (user) {
 		if (!user) return;
@@ -197,6 +201,8 @@ var GlobalRoom = (function () {
 			}];
 		}
 
+		// cached list of chat rooms for the room list
+		// usually does not contain private rooms, but no guarantees
 		this.chatRooms = [];
 
 		this.autojoin = []; // rooms that users autojoin upon connecting
@@ -214,7 +220,7 @@ var GlobalRoom = (function () {
 					aliases[room.aliases[a]] = room;
 				}
 			}
-			this.chatRooms.push(room);
+			if (!room.isPrivate || room.isPrivate === 'voice') this.chatRooms.push(room);
 			if (room.autojoin) this.autojoin.push(id);
 			if (room.staffAutojoin) this.staffAutojoin.push(id);
 		}
@@ -762,7 +768,7 @@ var BattleRoom = (function () {
 				this.push('|raw|ERROR: Ladder not updated: a player does not exist');
 			} else {
 				winner = Users.get(winnerid);
-				if (winner && !winner.authenticated) {
+				if (winner && !winner.registered) {
 					this.sendUser(winner, '|askreg|' + winner.userid);
 				}
 				var p1rating, p2rating;
@@ -1621,6 +1627,7 @@ Rooms.createChatRoom = function (roomid, title, data) {
 console.log("NEW GLOBAL: global");
 rooms.global = new GlobalRoom('global');
 
+Rooms.Room = Room;
 Rooms.GlobalRoom = GlobalRoom;
 Rooms.BattleRoom = BattleRoom;
 Rooms.ChatRoom = ChatRoom;

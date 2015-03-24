@@ -196,6 +196,14 @@ var commands = exports.commands = {
 
 	makechatroom: function (target, room, user) {
 		if (!this.can('makeroom')) return;
+
+		// `,` is a delimiter used by a lot of /commands
+		// `|` and `[` are delimiters used by the protocol
+		// `-` has special meaning in roomids
+		if (target.indexOf(',') >= 0 || target.indexOf('|') >= 0 || target.indexOf('[') >= 0 || target.indexOf('-') >= 0) {
+			return this.sendReply("Room titles can't contain any of: ,|[-");
+		}
+
 		var id = toId(target);
 		if (!id) return this.parse('/help makechatroom');
 		if (Rooms.rooms[id]) return this.sendReply("The room '" + target + "' already exists.");
@@ -246,6 +254,11 @@ var commands = exports.commands = {
 			if (room.chatRoomData) {
 				delete room.chatRoomData.isPrivate;
 				Rooms.global.writeChatRoomData();
+			}
+			if (room.type === 'chat') {
+				if (Rooms.global.chatRooms.indexOf(room) < 0) {
+					Rooms.global.chatRooms.push(room);
+				}
 			}
 		} else {
 			room.isPrivate = setting;
@@ -639,19 +652,19 @@ var commands = exports.commands = {
 		if (!targetRoom) {
 			return connection.sendTo(target, "|noinit|nonexistent|The room '" + target + "' does not exist.");
 		}
-		if (targetRoom.isPrivate) {
-			if (targetRoom.modjoin && !user.can('bypassall')) {
-				var userGroup = user.group;
-				if (targetRoom.auth) {
-					if (targetRoom.isPrivate === true) {
-						userGroup = ' ';
-					}
-					userGroup = targetRoom.auth[user.userid] || userGroup;
+		if (targetRoom.modjoin && !user.can('bypassall')) {
+			var userGroup = user.group;
+			if (targetRoom.auth) {
+				if (targetRoom.isPrivate === true) {
+					userGroup = ' ';
 				}
-				if (Config.groupsranking.indexOf(userGroup) < Config.groupsranking.indexOf(targetRoom.modjoin !== true ? targetRoom.modjoin : targetRoom.modchat)) {
-					return connection.sendTo(target, "|noinit|nonexistent|The room '" + target + "' does not exist.");
-				}
+				userGroup = targetRoom.auth[user.userid] || userGroup;
 			}
+			if (Config.groupsranking.indexOf(userGroup) < Config.groupsranking.indexOf(targetRoom.modjoin !== true ? targetRoom.modjoin : targetRoom.modchat)) {
+				return connection.sendTo(target, "|noinit|nonexistent|The room '" + target + "' does not exist.");
+			}
+		}
+		if (targetRoom.isPrivate) {
 			if (!user.named) {
 				return connection.sendTo(target, "|noinit|namerequired|You must have a name in order to join the room '" + target + "'.");
 			}
@@ -824,6 +837,11 @@ var commands = exports.commands = {
 			return this.privateModCommand("(" + targetUser.name + " would be locked by " + user.name + problem + ".)");
 		}
 
+		if (targetUser.group !== ' ') {
+			targetUser.setGroup(' ');
+			ResourceMonitor.log("[CrisisMonitor] " + targetUser.name + " was demoted from being locked by " + user.name + ".");
+		}
+
 		targetUser.popup("" + user.name + " has locked you from talking in chats, battles, and PMing regular users." + (target ? "\n\nReason: " + target : "") + "\n\nIf you feel that your lock was unjustified, you can still PM staff members (%, @, &, and ~) to discuss it" + (Config.appealurl ? " or you can appeal:\n" + Config.appealurl : ".") + "\n\nYour lock will expire in a few days.");
 
 		this.addModCommand("" + targetUser.name + " was locked from talking by " + user.name + "." + (target ? " (" + target + ")" : ""));
@@ -872,6 +890,11 @@ var commands = exports.commands = {
 		if (Users.checkBanned(targetUser.latestIp) && !target && !targetUser.connected) {
 			var problem = " but was already banned";
 			return this.privateModCommand("(" + targetUser.name + " would be banned by " + user.name + problem + ".)");
+		}
+
+		if (targetUser.group !== ' ') {
+			targetUser.setGroup(' ');
+			ResourceMonitor.log("[CrisisMonitor] " + targetUser.name + " was demoted from being banned by " + user.name + ".");
 		}
 
 		targetUser.popup("" + user.name + " has banned you." + (target ? "\n\nReason: " + target : "") + (Config.appealurl ? "\n\nIf you feel that your ban was unjustified, you can appeal:\n" + Config.appealurl : "") + "\n\nYour ban will expire in a few days.");
@@ -1950,7 +1973,7 @@ var commands = exports.commands = {
 	cmd: 'query',
 	query: function (target, room, user, connection) {
 		// Avoid guest users to use the cmd errors to ease the app-layer attacks in emergency mode
-		var trustable = (!Config.emergency || (user.named && user.authenticated));
+		var trustable = (!Config.emergency || (user.named && user.registered));
 		if (Config.emergency && ResourceMonitor.countCmd(connection.ip, user.name)) return false;
 		var spaceIndex = target.indexOf(' ');
 		var cmd = target;

@@ -131,7 +131,6 @@ exports.BattleMovedex = {
 	},
 	detect: {
 		inherit: true,
-		//desc: "",
 		priority: 3
 	},
 	dig: {
@@ -141,7 +140,7 @@ exports.BattleMovedex = {
 	disable: {
 		inherit: true,
 		accuracy: 55,
-		isBounceable: false,
+		flags: {protect: 1, mirror: 1, authentic: 1},
 		volatileStatus: 'disable',
 		effect: {
 			durationCallback: function () {
@@ -209,7 +208,7 @@ exports.BattleMovedex = {
 	},
 	encore: {
 		inherit: true,
-		isBounceable: false,
+		flags: {protect: 1, mirror: 1, authentic: 1},
 		volatileStatus: 'encore',
 		effect: {
 			durationCallback: function () {
@@ -340,7 +339,7 @@ exports.BattleMovedex = {
 	},
 	foresight: {
 		inherit: true,
-		isBounceable: false
+		flags: {protect: 1, mirror: 1, authentic: 1}
 	},
 	furycutter: {
 		inherit: true,
@@ -480,9 +479,9 @@ exports.BattleMovedex = {
 	moonlight: {
 		inherit: true,
 		onHit: function (pokemon) {
-			if (this.isWeather(['sunnyday', 'desolateland'])) {
+			if (this.isWeather('sunnyday')) {
 				this.heal(pokemon.maxhp * 2 / 3);
-			} else if (this.isWeather(['raindance', 'primordialsea', 'sandstorm', 'hail'])) {
+			} else if (this.isWeather(['raindance', 'sandstorm', 'hail'])) {
 				this.heal(pokemon.maxhp / 4);
 			} else {
 				this.heal(pokemon.maxhp / 2);
@@ -492,9 +491,9 @@ exports.BattleMovedex = {
 	morningsun: {
 		inherit: true,
 		onHit: function (pokemon) {
-			if (this.isWeather(['sunnyday', 'desolateland'])) {
+			if (this.isWeather('sunnyday')) {
 				this.heal(pokemon.maxhp * 2 / 3);
-			} else if (this.isWeather(['raindance', 'primordialsea', 'sandstorm', 'hail'])) {
+			} else if (this.isWeather(['raindance', 'sandstorm', 'hail'])) {
 				this.heal(pokemon.maxhp / 4);
 			} else {
 				this.heal(pokemon.maxhp / 2);
@@ -517,7 +516,7 @@ exports.BattleMovedex = {
 	},
 	odorsleuth: {
 		inherit: true,
-		isBounceable: false
+		flags: {protect: 1, mirror: 1, authentic: 1}
 	},
 	outrage: {
 		inherit: true,
@@ -548,7 +547,7 @@ exports.BattleMovedex = {
 	},
 	roar: {
 		inherit: true,
-		isBounceable: false
+		flags: {mirror: 1, sound: 1, authentic: 1}
 	},
 	rockblast: {
 		inherit: true,
@@ -586,11 +585,11 @@ exports.BattleMovedex = {
 	},
 	spikes: {
 		inherit: true,
-		isBounceable: false
+		flags: {}
 	},
 	spite: {
 		inherit: true,
-		isBounceable: false,
+		flags: {protect: 1, mirror: 1, authentic: 1},
 		onHit: function (target) {
 			var roll = this.random(2, 6);
 			if (target.deductPP(target.lastMove, roll)) {
@@ -627,9 +626,9 @@ exports.BattleMovedex = {
 	synthesis: {
 		inherit: true,
 		onHit: function (pokemon) {
-			if (this.isWeather(['sunnyday', 'desolateland'])) {
+			if (this.isWeather('sunnyday')) {
 				this.heal(pokemon.maxhp * 2 / 3);
-			} else if (this.isWeather(['raindance', 'primordialsea', 'sandstorm', 'hail'])) {
+			} else if (this.isWeather(['raindance', 'sandstorm', 'hail'])) {
 				this.heal(pokemon.maxhp / 4);
 			} else {
 				this.heal(pokemon.maxhp / 2);
@@ -649,7 +648,7 @@ exports.BattleMovedex = {
 	},
 	taunt: {
 		inherit: true,
-		isBounceable: false,
+		flags: {protect: 1, mirror: 1, authentic: 1},
 		effect: {
 			duration: 2,
 			onStart: function (target) {
@@ -686,7 +685,7 @@ exports.BattleMovedex = {
 	},
 	torment: {
 		inherit: true,
-		isBounceable: false
+		flags: {protect: 1, mirror: 1, authentic: 1}
 	},
 	toxic: {
 		inherit: true,
@@ -716,7 +715,7 @@ exports.BattleMovedex = {
 	},
 	whirlwind: {
 		inherit: true,
-		isBounceable: false
+		flags: {mirror: 1, authentic: 1}
 	},
 	wish: {
 		inherit: true,
