@@ -716,7 +716,7 @@ user.updateIdentity();
 
     givebadges:'givebadge',
     givebadge: function (target, room, user) {
-        if (!user.can('mute')) return;
+        if (!user.can('mute', null, room) return;
         if (!target) return this.sendReply('You did not specify a user.');
 
         if (target.indexOf(',') >= 0) {
