@@ -739,9 +739,11 @@ user.updateIdentity();
         var money = Core.lstdin(thisRoom, targetUser.userid);
         var total = Number(money) + Number(giveMoney);
 
-        Core.lstdout(thisRoom, targetUser.userid, total);
-
-        this.add('|raw|<b>'+targetUser.name + ' was given ' + giveMoney + ' ' + b + '. This user now has ' + total + ' badges.</b>');
+        if (room.chatRoomData) {
+		Core.lstdout(thisRoom, targetUser.userid, total);
+	
+	        this.add('|raw|<b>'+targetUser.name + ' was given ' + giveMoney + ' ' + b + '. This user now has ' + total + ' badges.</b>');
+	}
     },
 
     show: function (target, room, user) {
