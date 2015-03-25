@@ -3445,6 +3445,25 @@ exports.Formats = [
 		'Snubbull', 'Spritzee', 'Staryu', 'Surskit', 'Timburr', 'Tirtouga', 'Vullaby', 'Vulpix', 'Zigzagoon', 'Shell Smash']
 	},
 	{
+		name: "LC AAA",
+		section: "LC OMs",
+
+		ruleset: ['Pokemon', 'Standard', 'Little Cup', 'Swagger Clause', 'Team Preview'],
+		banlist: ['Ignore Illegal Abilities',  'Chatter', 'Damp Rock', 'Heat Rock', 'Smooth Rock', 'Archen', 'Gligar', 'Murkrow', 'Scyther', 'Sneasel', 'Swirlix', 'Tangela', 'Yanma'],
+		validateSet: function (set) {
+			var bannedAbilities = {'Arena Trap': 1, 'Adaptability': 1, 'Contrary': 1, 'Fur Coat': 1, 'Gale Wings': 1, 'Huge Power': 1, 'Imposter': 1, 'Parental Bond': 1, 'Pure Power': 1, 'Sand Veil': 1, 'Shadow Tag': 1, 'Simple': 1, 'Snow Cloak': 1, 'Speed Boost': 1, 'Wonder Guard': 1};
+			if (set.ability in bannedAbilities) {
+				var template = this.getTemplate(set.species || set.name);
+				var legalAbility = false;
+				for (var i in template.abilities) {
+					if (set.ability === template.abilities[i]) legalAbility = true;
+				}
+				if (!legalAbility) return ['The ability ' + set.ability + ' is banned on Pokémon that do not naturally have it.'];
+			}
+		}
+	},
+	{
+		
 	
 	// BW2 Singles
 	///////////////////////////////////////////////////////////////////
