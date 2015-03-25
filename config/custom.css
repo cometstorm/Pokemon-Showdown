@@ -1,7 +1,8 @@
-  /* Header */
+ /* Header */
 #header {
   background: url("http://i.imgur.com/ESyNoL9.gif?2") no-repeat;
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, .4);
+    
 }
 .header .logo {
                 display:none;
@@ -11,27 +12,26 @@ body {
     background: url("http://i.imgur.com/tRGod94.jpg?2")!important;
 }
  .mainmenuwrapper{
-         
+         background: url("http://i.imgur.com/WBaeQrj.gif?1") bottom right no-repeat;
 }
  
 /* Tabbar rooms */
 .tabbar a.button.cur, .tabbar a.button.cur:hover {
     color: #fff;
-    background: url("http://i.imgur.com/vdZCQUT.png?3");
+    background: url("http://i.imgur.com/mb7edrt.png?1");
    
 }
    
  
-.tabbar a.button {
+.tabbar a.button { 
   color: #fff;
-   background: url("http://i.imgur.com/vdZCQUT.png?3");
-
+  background: url("http://i.imgur.com/vdZCQUT.png?3")
    
 }
  
 .maintabbarbottom {
-    background: #403e3c;
-    opacity: 0.4;
+    background: rgb(146, 109, 34);
+    opacity: 1;
    
 }
  
@@ -88,7 +88,8 @@ body {
 /* Userlist */
 .userlist {
    
-    background: rgba(230, 230, 230, 0.8);
+    background: rgba(0, 0, 0, .04);
+  	border-left: 1px solid #a3a3a3
 }
  
 .userlist li {
@@ -116,7 +117,7 @@ body {
  
 .chat-log-add {
    
-    background: #E6E6E6;
+    background: #DEA533;
 }
  
 /* Announce */
@@ -198,9 +199,7 @@ body {
  
 .battle-log .chat em{
     font-size:10pt;
-   
   }
- 
  
 /* Roomlist */
 .roomlist a.ilink {
