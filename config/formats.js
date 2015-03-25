@@ -3463,7 +3463,12 @@ exports.Formats = [
 		}
 	},
 	{
-		
+	        name: "LC Monotype",
+		section: "LC OMs",
+
+		ruleset: ['Pokemon', 'Standard', 'Baton Pass Clause', 'Swagger Clause', 'Same Type Clause', 'Team Preview'],
+		banlist: ['LC Uber', 'Gligar', 'Misdreavus', 'Scyther', 'Sneasel', 'Tangela', 'Dragon Rage', 'Sonic Boom', 'Swagger']
+	},
 	
 	// BW2 Singles
 	///////////////////////////////////////////////////////////////////
