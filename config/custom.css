@@ -23,7 +23,9 @@ body {
    
  
 .tabbar a.button {
- 
+  color: #fff;
+   background: url("http://i.imgur.com/vdZCQUT.png?3");
+
    
 }
  
