@@ -3466,7 +3466,7 @@ exports.Formats = [
 	        name: "LC Monotype",
 		section: "LC OMs",
 
-		ruleset: ['Pokemon', 'Standard', 'Baton Pass Clause', 'Swagger Clause', 'Same Type Clause', 'Team Preview'],
+		ruleset: ['Pokemon', 'Standard', 'Same Type Clause', 'Team Preview', 'Little Cup'],
 		banlist: ['LC Uber', 'Gligar', 'Misdreavus', 'Scyther', 'Sneasel', 'Tangela', 'Dragon Rage', 'Sonic Boom', 'Swagger']
 	},
 	
