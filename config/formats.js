@@ -3653,6 +3653,14 @@ exports.Formats = [
 		banlist: ['Wobbuffet + Leftovers']
 	},
 	{
+		name: "[Gen 3] LC",
+		section: "Past Generations",
+
+		mod: 'gen3',
+		ruleset: ['Pokemon', 'Standard', 'Little Cup'],
+		banlist: ['Scyther', 'Zigzagoon + Belly Drum', 'Chansey', 'Dragon Rage', 'Sonic Boom']
+	},
+	{
 		name: "[Gen 3] Custom Game",
 		section: "Past Generations",
 
