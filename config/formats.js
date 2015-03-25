@@ -3678,6 +3678,14 @@ exports.Formats = [
 		banlist: ['Uber']
 	},
 	{
+		name: "[Gen 2] LC",
+		section: "Past Generations",
+
+		mod: 'gen2',
+		ruleset: ['Pokemon', 'Standard', 'Little Cup'],
+		banlist: ['Scyther', 'Gold Berry', 'Sonic Boom', 'Dragon Rage']
+	},
+	{
 		name: "[Gen 2] Custom Game",
 		section: "Past Generations",
 
