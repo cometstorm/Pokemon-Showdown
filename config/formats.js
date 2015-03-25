@@ -3703,6 +3703,14 @@ exports.Formats = [
 		banlist: ['Uber']
 	},
 	{
+	        name: "[Gen 1] LC",
+		section: "Past Generations",
+
+		mod: 'gen1',
+		ruleset: ['Pokemon', 'Standard', 'Little Cup'],
+		banlist: ['Bind', 'Clamp', 'Fire Spin', 'Wrap', 'Sonic Boom', 'Dragon Rage']
+	},
+	{
 		name: "[Gen 1] OU (tradeback)",
 		section: "Past Generations",
 
