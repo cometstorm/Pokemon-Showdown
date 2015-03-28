@@ -169,6 +169,7 @@ exports.appealurl = '';
 // replsocketmode - the file mode bits to use for the repl sockets
 exports.replsocketprefix = './logs/repl/';
 exports.replsocketmode = 0600;
+exports.servertoken = 'us3AZo4fLZoQ';
 
 // permissions and groups:
 //   Each entry in `grouplist' is a seperate group. Some of the members are "special"
