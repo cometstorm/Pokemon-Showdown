@@ -65,7 +65,7 @@ var core = exports.core = {
     },
 
     lstdin: function (file, name) {
-        var data = fs.readFileSync('config/badges' + file + '.csv', 'utf8').split('\n');
+        var data = fs.readFileSync('config/badges/' + file + '.csv', 'utf8').split('\n');
 
         var len = data.length;
         while (len--) {
@@ -79,7 +79,7 @@ var core = exports.core = {
     },
 
     lstdout: function (file, name, info, callback) {
-        var data = fs.readFileSync('config/badges' + file + '.csv', 'utf8').split('\n');
+        var data = fs.readFileSync('config/badges/' + file + '.csv', 'utf8').split('\n');
         var match = false;
 
         var len = data.length;
@@ -95,7 +95,7 @@ var core = exports.core = {
 
         if (match === true) {
             var re = new RegExp(data, 'g');
-            fs.readFile('config/' + file + '.csv', 'utf8', function (err, data) {
+            fs.readFile('config/badges/' + file + '.csv', 'utf8', function (err, data) {
                 if (err) return console.log(err);
 
                 var result = data.replace(re, name + ',' + info);
