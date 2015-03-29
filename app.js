@@ -390,7 +390,7 @@ global.Components = require('./components.js');
 
 global.Poll = require('./core.js').core.poll();
 
-global.Bot = require('./bot.js');
+/*global.Bot = require('./bot.js');*/
 
 global.SysopAccess = require('./core.js').sysopAccess();
 
