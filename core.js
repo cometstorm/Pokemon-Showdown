@@ -166,7 +166,7 @@ var core = exports.core = {
 
         color: '#2ECC40',
 
-        avatarurl: 'http://107.161.19.15:8000',
+        avatarurl: 'http://107.191.107.56:8000',
 
         avatar: function (online, user, img) {
             if (online === true) {
@@ -175,7 +175,7 @@ var core = exports.core = {
                 }
                 return '<img src="http://play.pokemonshowdown.com/sprites/trainers/' + img + '.png" width="80" height="80" align="left">';
             }
-            for (var name in Config.customAvatars) {
+            for (var name in Config.customavatars) {
                 if (user === name) {
                     return '<img src="' + this.avatarurl + '/avatars/' + Config.customAvatars[name] + '" width="80" height="80" align="left">';
                 }
