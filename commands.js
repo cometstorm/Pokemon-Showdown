@@ -133,6 +133,7 @@ var commands = exports.commands = {
 			var innerTarget = (innerCmdIndex >= 0 ? target.slice(innerCmdIndex + 1) : '');
 			switch (innerCmd) {
 			case 'me':
+			case 'mee':
 			case 'announce':
 				break;
 			case 'invite':
@@ -169,9 +170,9 @@ var commands = exports.commands = {
 		user.ignorePMs = true;
 		if (target in Config.groups) {
 			user.ignorePMs = target;
-			return this.sendReply("You are now blocking private messages (including challenges), except from staff and " + target + ".");
+			return this.sendReply("You are now blocking private messages, except from staff and " + target + ".");
 		}
-		return this.sendReply("You are now blocking private messages (including challenges), except from staff.");
+		return this.sendReply("You are now blocking private messages, except from staff.");
 	},
 
 	unblockpm: 'unignorepms',
@@ -519,7 +520,7 @@ var commands = exports.commands = {
 			this.addModCommand("" + name + " was promoted to Room " + groupName + " by " + user.name + ".");
 		}
 
-		if (targetUser) targetUser.updateIdentity();
+		if (targetUser) targetUser.updateIdentity(room.id);
 		if (room.chatRoomData) Rooms.global.writeChatRoomData();
 	},
 
@@ -573,8 +574,8 @@ var commands = exports.commands = {
 		}
 		if (targetId === user.userid || user.can('makeroom')) {
 			innerBuffer = [];
-			for (var i = 0; i < Rooms.global.chatRooms.length; i++) {
-				var curRoom = Rooms.global.chatRooms[i];
+			for (var id in Rooms.rooms) {
+				var curRoom = Rooms.rooms[id];
 				if (!curRoom.auth || !curRoom.isPrivate) continue;
 				var auth = curRoom.auth[targetId];
 				if (!auth) continue;
@@ -837,9 +838,9 @@ var commands = exports.commands = {
 			return this.privateModCommand("(" + targetUser.name + " would be locked by " + user.name + problem + ".)");
 		}
 
-		if (targetUser.group !== ' ') {
-			targetUser.setGroup(' ');
-			ResourceMonitor.log("[CrisisMonitor] " + targetUser.name + " was demoted from being locked by " + user.name + ".");
+		if (targetUser.confirmed) {
+			var from = targetUser.deconfirm();
+			ResourceMonitor.log("[CrisisMonitor] " + targetUser.name + " was locked by " + user.name + " and demoted from " + from.join(", ") + ".");
 		}
 
 		targetUser.popup("" + user.name + " has locked you from talking in chats, battles, and PMing regular users." + (target ? "\n\nReason: " + target : "") + "\n\nIf you feel that your lock was unjustified, you can still PM staff members (%, @, &, and ~) to discuss it" + (Config.appealurl ? " or you can appeal:\n" + Config.appealurl : ".") + "\n\nYour lock will expire in a few days.");
@@ -892,9 +893,9 @@ var commands = exports.commands = {
 			return this.privateModCommand("(" + targetUser.name + " would be banned by " + user.name + problem + ".)");
 		}
 
-		if (targetUser.group !== ' ') {
-			targetUser.setGroup(' ');
-			ResourceMonitor.log("[CrisisMonitor] " + targetUser.name + " was demoted from being banned by " + user.name + ".");
+		if (targetUser.confirmed) {
+			var from = targetUser.deconfirm();
+			ResourceMonitor.log("[CrisisMonitor] " + targetUser.name + " was banned by " + user.name + " and demoted from " + from.join(", ") + ".");
 		}
 
 		targetUser.popup("" + user.name + " has banned you." + (target ? "\n\nReason: " + target : "") + (Config.appealurl ? "\n\nIf you feel that your ban was unjustified, you can appeal:\n" + Config.appealurl : "") + "\n\nYour ban will expire in a few days.");
@@ -1909,7 +1910,7 @@ var commands = exports.commands = {
 		if (!targetUser || !targetUser.connected) {
 			return this.popupReply("The user '" + this.targetUsername + "' was not found.");
 		}
-		if ((targetUser.blockChallenges || targetUser.ignorePMs) && !user.can('bypassblocks', targetUser)) {
+		if (targetUser.blockChallenges && !user.can('bypassblocks', targetUser)) {
 			return this.popupReply("The user '" + this.targetUsername + "' is not accepting challenges right now.");
 		}
 		if (Config.pmmodchat) {
@@ -1925,12 +1926,18 @@ var commands = exports.commands = {
 		});
 	},
 
+	bch: 'blockchallenges',
+	blockchall: 'blockchallenges',
+	blockchalls: 'blockchallenges',
 	blockchallenges: function (target, room, user) {
 		if (user.blockChallenges) return this.sendReply("You are already blocking challenges!");
 		user.blockChallenges = true;
 		this.sendReply("You are now blocking all incoming challenge requests.");
 	},
 
+	unbch: 'allowchallenges',
+	unblockchall: 'allowchallenges',
+	unblockchalls: 'allowchallenges',
 	unblockchallenges: 'allowchallenges',
 	allowchallenges: function (target, room, user) {
 		if (!user.blockChallenges) return this.sendReply("You are already available for challenges!");

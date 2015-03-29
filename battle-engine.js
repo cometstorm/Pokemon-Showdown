@@ -365,6 +365,30 @@ BattlePokemon = (function () {
 		}
 		if (init) return;
 
+		// Change formes based on held items (for Transform)
+		// Only ever relevant in Generation 4 since Generation 3 didn't have item-based forme changes
+		if (this.battle.gen === 4) {
+			if (this.template.num === 487) {
+				// Giratina formes
+				if (this.template.species === 'Giratina' && this.item === 'griseousorb') {
+					this.formeChange('Giratina-Origin');
+					this.battle.add('-formechange', this, 'Giratina-Origin');
+				} else if (this.template.species === 'Giratina-Origin' && this.item !== 'griseousorb') {
+					this.formeChange('Giratina');
+					this.battle.add('-formechange', this, 'Giratina');
+				}
+			}
+			if (this.template.num === 493) {
+				// Arceus formes
+				var item = Tools.getItem(this.item);
+				var targetForme = (item && item.onPlate ? 'Arceus-' + item.onPlate : 'Arceus');
+				if (this.template.species !== targetForme) {
+					this.formeChange(targetForme);
+					this.battle.add('-formechange', this, targetForme);
+				}
+			}
+		}
+
 		if (this.runImmunity('trapped')) this.battle.runEvent('MaybeTrapPokemon', this);
 		// Disable the faculty to cancel switches if a foe may have a trapping ability
 		for (var i = 0; i < this.battle.sides.length; ++i) {
@@ -407,7 +431,10 @@ BattlePokemon = (function () {
 
 		// stat boosts
 		// boost = this.boosts[statName];
-		boost = this.battle.runEvent('ModifyBoost', this, statName, null, boost);
+		var boosts = {};
+		boosts[statName] = boost;
+		boosts = this.battle.runEvent('ModifyBoost', this, null, null, boosts);
+		boost = boosts[statName];
 		var boostTable = [1, 1.5, 2, 2.5, 3, 3.5, 4];
 		if (boost > 6) boost = 6;
 		if (boost < -6) boost = -6;
@@ -436,8 +463,8 @@ BattlePokemon = (function () {
 
 		// stat boosts
 		if (!unboosted) {
-			var boost = this.boosts[statName];
-			boost = this.battle.runEvent('ModifyBoost', this, statName, null, boost);
+			var boosts = this.battle.runEvent('ModifyBoost', this, null, null, Object.clone(this.boosts));
+			var boost = boosts[statName];
 			var boostTable = [1, 1.5, 2, 2.5, 3, 3.5, 4];
 			if (boost > 6) boost = 6;
 			if (boost < -6) boost = -6;
@@ -1019,6 +1046,10 @@ BattlePokemon = (function () {
 		if (!this.isActive) return false;
 		if (!this.item) return false;
 		if (!source) source = this;
+		if (this.battle.gen === 4) {
+			if (toId(this.ability) === 'multitype') return false;
+			if (source && toId(source.ability) === 'multitype') return false;
+		}
 		var item = this.getItem();
 		if (this.battle.runEvent('TakeItem', this, source, null, item)) {
 			this.item = '';
@@ -2684,7 +2715,11 @@ Battle = (function () {
 				pokemon.usedItemThisTurn = false;
 				pokemon.newlySwitched = false;
 				if (pokemon.lastAttackedBy) {
-					pokemon.lastAttackedBy.thisTurn = false;
+					if (pokemon.lastAttackedBy.pokemon.isActive) {
+						pokemon.lastAttackedBy.thisTurn = false;
+					} else {
+						pokemon.lastAttackedBy = null;
+					}
 				}
 				pokemon.activeTurns++;
 			}
@@ -3063,11 +3098,8 @@ Battle = (function () {
 			ignoreNegativeOffensive = true;
 			ignorePositiveDefensive = true;
 		}
-		// Check for abilities to see if defenses or offenses are negated (Unaware, Mold Breaker, etc.)
-		var targetAbilityIgnoreOffensive = !target.ignore['Ability'] && target.getAbility().ignoreOffensive;
-		var pokemonAbilityIgnoreDefensive = !pokemon.ignore['Ability'] && pokemon.getAbility().ignoreDefensive;
-		var ignoreOffensive = !!(move.ignoreOffensive || targetAbilityIgnoreOffensive || (ignoreNegativeOffensive && atkBoosts < 0));
-		var ignoreDefensive = !!(move.ignoreDefensive || pokemonAbilityIgnoreDefensive || (ignorePositiveDefensive && defBoosts > 0));
+		var ignoreOffensive = !!(move.ignoreOffensive || (ignoreNegativeOffensive && atkBoosts < 0));
+		var ignoreDefensive = !!(move.ignoreDefensive || (ignorePositiveDefensive && defBoosts > 0));
 
 		if (ignoreOffensive) {
 			this.debug('Negating (sp)atk boost/penalty.');
