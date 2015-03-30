@@ -465,6 +465,7 @@ text-decoration: none;
 }
 .icon-user:before {
   content: url("http://i.imgur.com/QES0gEZ.png");
+  display: none;
 }
  
 /* Footer links */
