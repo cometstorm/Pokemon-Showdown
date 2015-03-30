@@ -105,6 +105,7 @@ text-align: center;
   width: 146px;
   height: 44px;
   float: left;
+  display: none;
 }
  
 /*.roomlist{
@@ -324,6 +325,7 @@ cursor: pointer;
 }
 .icon-user:before {
 content: url('http://i.imgur.com/97flsJB.png?1?7655');
+display: none;
 }
 .tournament-bracket-tree-node>rect {
 fill: rgba(160, 194, 241, 0.7)!important;
