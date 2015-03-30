@@ -99,16 +99,12 @@ text-align: center;
   background: url('http://i.imgur.com/9Jw7LSq.png') !important;
   border: 1px solid #c8af86 !important;
 }
-.header .logo{
- background: url('http://i.imgur.com/ESyNoL9.gif?2');
- background-repeat: no-repeat;
- width: 146px;
- height: 44px;
- content:"";
- float: left;
- position: relative;
- top: 1px;
- 
+.header .logo {
+  content: url("http://i.imgur.com/ESyNoL9.gif?2");
+  background-repeat: no-repeat;
+  width: 146px;
+  height: 44px;
+  float: left;
 }
  
 /*.roomlist{
@@ -192,10 +188,9 @@ border-top-right-radius: 5px;
 cursor: pointer;
 }
 .userbar {
-background: #F5E4B8;
-padding: 5px;
-margin: -9px;
-border: 2px solid #756335;
+  background-color: tan;
+  padding: 2px;
+  border: 2px solid rgb(155, 121, 76);
 }
 .userlist, .userlist li {
 background: url('http://i.imgur.com/xE5OXWD.png');
@@ -466,9 +461,8 @@ text-decoration: none;
 .userlist li button:hover{
       background: url(http://i.imgur.com/ldpBTQy.png)
 }
-.userbar:before {
-background: url(http://img2.wikia.nocookie.net/__cb20120809201208/nintendo/en/images/4/47/Lotad_Icon.png);
-left: -5px;
+.icon-user:before {
+  content: url("http://i.imgur.com/QES0gEZ.png");
 }
  
 /* Footer links */
