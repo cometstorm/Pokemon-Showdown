@@ -878,6 +878,47 @@ var commands = exports.commands = {
 			this.sendReply("User '" + target + "' is not locked.");
 		}
 	},
+	
+	sban: 'shadowban',
++	shadowban: function (target, room, user) {
++		if (!target) return this.sendReply("Please specify a user.");
++
++		var params = this.splitTarget(target).split(',');
++		var action = params[0].trim().toLowerCase();
++		var reason = params.slice(1).join(',').trim();
++		if (!(action in CommandParser.commands)) {
++			action = null;
++			reason = params.join(',').trim();
++		}
++
++		if (!this.targetUser) {
++			return this.sendReply("User '" + this.targetUsername + "' not found.");
++		}
++		if (!this.can('shadowban', this.targetUser)) return false;
++
++		var targets = ShadowBan.addUser(this.targetUser);
++		if (targets.length === 0) {
++			return this.sendReply("That user's messages are already being redirected to the shadow ban room.");
++		}
++		this.privateModCommand("(" + user.name + " has added to the shadow ban user list: " + targets.join(", ") + (reason ? " (" + reason + ")" : "") + ")");
++
++		if (action) return this.parse('/' + action + ' ' + user.userid + ',' + reason);
++	},
++
++	unsban: 'unshadowban',
++	unshadowban: function (target, room, user) {
++		if (!target) return this.sendReply("Please specify a user.");
++		this.splitTarget(target);
++
++		if (!this.can('shadowban')) return false;
++
++		var targets = ShadowBan.removeUser(this.targetUser || this.targetUsername);
++		if (targets.length === 0) {
++			return this.sendReply("That user is not in the shadow ban list.");
++		}
++		this.privateModCommand("(" + user.name + " has removed from the shadow ban user list: " + targets.join(", ") + ")");
++	},
++
 
 	b: 'ban',
 	ban: function (target, room, user) {
