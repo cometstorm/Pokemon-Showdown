@@ -100,11 +100,6 @@ text-align: center;
   border: 1px solid #c8af86 !important;
 }
 .header .logo {
-  content: url("http://i.imgur.com/ESyNoL9.gif?2");
-  background-repeat: no-repeat;
-  width: 146px;
-  height: 44px;
-  float: left;
   display: none;
 }
  
