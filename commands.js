@@ -358,13 +358,13 @@ var commands = exports.commands = {
 			if (!this.canBroadcast()) return;
 			if (!room.introMessage) return this.sendReply("This room does not have an introduction set.");
 			this.sendReplyBox(room.introMessage);
-			if (!this.broadcasting && user.can('declare', null, room)) {
+			if (!this.broadcasting && user.can('ban', null, room)) {
 				this.sendReply('Source:');
 				this.sendReplyBox('<code>' + Tools.escapeHTML(room.introMessage) + '</code>');
 			}
 			return;
 		}
-		if (!this.can('declare', null, room)) return false;
+		if (!this.can('ban', null, room)) return false;
 		if (!this.canHTML(target)) return;
 		if (!/</.test(target)) {
 			// not HTML, do some simple URL linking
