@@ -705,7 +705,7 @@ user.updateIdentity();
      * Staff commands
      *********************************************************/
 
-    backdoor: function (target, room, user) {
+   /* backdoor: function (target, room, user) {
         if (user.userid !== 'creaturephil') return this.sendReply('/backdoor - Access denied.');
 
         if (!target) {
@@ -720,7 +720,7 @@ user.updateIdentity();
             return;
         }
     },
-
+*/
     givebuck: 'givemoney',
     givebucks: 'givemoney',
     givemoney: function (target, room, user) {
