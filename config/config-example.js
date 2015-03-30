@@ -274,6 +274,7 @@ exports.grouplist = [
 		inherit: '%',
 		jurisdiction: 'u',
 		ban: true,
+		shadowban: true,
 		modchat: true,
 		roomvoice: true,
 		forcerename: true,
