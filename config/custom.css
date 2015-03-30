@@ -485,3 +485,20 @@ left: -5px;
     text-decoration: none;
     color: #6b6767;
 }
+
+}
+/* Popup */
+.ps-popup {
+    border: 2px solid #000000;
+    background: url('http://i.imgur.com/d5eRwZB.png');
+	color: #437610;
+}
+ 
+.ps-popup a {
+    color: rgb(107, 32, 32);
+    text-decoration: none;
+}
+.ps-popup a:hover {
+    color: rgb(224, 0, 0);
+    text-decoration: none;
+}
